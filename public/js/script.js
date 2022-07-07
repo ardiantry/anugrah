@@ -90,6 +90,7 @@ fetch(`http://www.emsifa.com/api-wilayah-indonesia/api/districts/3372.json`)
 if(get_id_kec!='')
 {
      kelurahan(get_id_kec,get_id_kel);
+     blok_sm(get_id_kel,get_id_blok);
    if(get_fiscal_parcels)
    {
 
@@ -100,7 +101,9 @@ if(get_id_kec!='')
       $('input[name="buildings"]').prop('checked',true);
    }
 
-     loaddata(get_id_kec,get_id_kel,get_fiscal_parcels,get_buildings);
+     loaddata(get_id_kec,get_id_kel,get_id_blok,get_fiscal_parcels,get_buildings);
+
+
 }
 
 $('body').delegate('select[name="id_kec"]','change',function(e)
@@ -125,7 +128,7 @@ function kelurahan(is_vilage,get_id_kel='')
     .then(response => response.json())
     .then(villages => 
     { 
-        var list_kec=`<option >--pilih desa--</option>`;
+        var list_kec=`<option value="">--pilih desa--</option>`;
         for(let li of villages)
         {
          
@@ -134,6 +137,35 @@ function kelurahan(is_vilage,get_id_kel='')
 
         }
         $('select[name="id_desa"]').html(list_kec); 
+    });
+
+}
+$('body').delegate('select[name="id_desa"]','change',function(e)
+{
+   e.preventDefault(); 
+   var id_desa=$(this).val();
+   blok_sm(id_desa);
+});
+
+function blok_sm(is_vilage,id_blok='')
+{
+
+    $('select[name="id_blok"]').removeAttr('readonly');
+    
+      const formblok   = new FormData(); 
+      formblok.append('_token',_token);
+      formblok.append('is_vilage',is_vilage); 
+      fetch(getblokdata, { method: 'POST',body:formblok}).then(res => res.json()).then(data => 
+      { 
+        var list_kec=`<option value="">--pilih blok--</option>`;
+        for(let li of data.get_dt)
+        {
+         
+         var selected_=id_blok==li.id_blok?'selected="selected"':'';
+         list_kec+=`<option value="`+li.id_blok+`" `+selected_+`>`+li.id_blok+`</option>`;
+
+        }
+        $('select[name="id_blok"]').html(list_kec); 
     });
 
 }
@@ -158,101 +190,55 @@ $('body').delegate('#nop','submit',function(e)
       var buildings=1;
    } 
    var get_kec=$('select[name="id_kec"]').val();
-   loaddata(get_kec,id_desa,fiscal_parcels,buildings);
+   var get_blok=$('select[name="id_blok"]').val();
+
+   loaddata(get_kec,id_desa,get_blok,fiscal_parcels,buildings);
+   loaddatalegalparsel($('input[name="Legal_parcels"]').is(':checked'));
  
 });
  
 
+
 //load layer with api
-function loaddata(id_kec,id_desa,fiscal_parcels='',buildings='')
+function loaddata(id_kec,id_desa,get_blok="",fiscal_parcels='',buildings='')
 { 
  
-var fiscal_url=fiscal_parcels==1?'&fiscal_parcels='+fiscal_parcels:'';
-var buildings_url=buildings==1?'&buildings='+buildings:'';
+      var fiscal_url    =fiscal_parcels==1?'&fiscal_parcels='+fiscal_parcels:'';
+      var buildings_url =buildings==1?'&buildings='+buildings:'';
+      var id_blok       =get_blok!=""?'&id_blok='+get_blok:'';
+      var url_          ='?id_kec='+id_kec+'&id_kel='+id_desa+id_blok+fiscal_url+buildings_url;
+      window.id_desa    =id_desa;
 
-var url_='?id_kec='+id_kec+'&id_kel='+id_desa+fiscal_url+buildings_url;
-window.id_desa=id_desa;
-
-      window.history.pushState({'historycontent':url_}, null,url_);
-
+      window.history.pushState({'historycontent':url_}, null,url_); 
       $('input[name="informasi"]').attr('disabled','disabled'); 
       $('input[name="ubah"]').attr('disabled','disabled'); 
-
-      var win_fis             =0; 
-      var win_bld             =0;  
-      var fiscal_parcels_arr  =[];
-      var buildings_arr       =[]; 
+ 
       for(let cek in window)
       {
-            if(cek.indexOf('fiscal_parcels_')!=-1&&cek.indexOf('pp_fiscal_parcels_')==-1)
+            if(cek.indexOf('fiscal_parcels_')!=-1||cek.indexOf('buildings_')!=-1)
             { 
-                  win_fis++; 
-                  fiscal_parcels_arr.push(cek); 
+               if(cek.indexOf('_fiscal_parcels_')==-1||cek.indexOf('_buildings_')==-1)
+               {
+                 map.removeLayer(window[cek]);
+                  window[cek]=undefined;
+               }
+               else
+               {
+                  window[cek]=undefined; 
+               }
+
             } 
-            if(cek.indexOf('buildings_')!=-1&&cek.indexOf('pp_buildings_')==-1)
-            {
-               win_bld++; 
-               buildings_arr.push(cek); 
-            } 
-      } 
-
-      if(win_fis>0)
-      {
-
-         if(fiscal_parcels==1)
-         {
-            for(let fcl of fiscal_parcels_arr)
-            {
-               window[fcl].setVisible(true);
-            }
-            $('input[name="informasi"]').removeAttr('disabled');
-            $('input[name="ubah"]').removeAttr('disabled');
-            informasi_layer('pp_fiscal_parcels',window['pp_fiscal_parcels']); 
-            fiscal_parcels=0;
-         }
-         else
-         {
-            for(let fcl of fiscal_parcels_arr)
-            {
-               window[fcl].setVisible(false);
-            }
-            informasi_layer('pp_fiscal_parcels',window['pp_fiscal_parcels'],false); 
-         } 
-      } 
-
-      if(win_bld>0)
-      {
-        
-         if(buildings==1)
-         {
-            for(let bld of buildings_arr)
-            {
-               window[bld].setVisible(true);
-            }
-            $('input[name="informasi"]').removeAttr('disabled');
-            $('input[name="ubah"]').removeAttr('disabled');
-            informasi_layer('pp_buildings',window['pp_buildings']); 
-            buildings=0;
-         }
-         else
-         {
-            for(let bld of buildings_arr)
-            {
-              window[bld].setVisible(false);
-            }
-            informasi_layer('pp_buildings',window['pp_buildings'],true); 
-         }
-         
+             if(cek.indexOf('_fiscal_parcels_')!=-1||cek.indexOf('_buildings_')!=-1)
+             {
+               window[cek]=undefined;
+               window[cek]=undefined;
+             }
+            
       }  
-
-      if(fiscal_parcels!=1&&buildings!=1)
-      {
-         return;
-      } 
-
+ 
       const formnop   = new FormData(); 
       formnop.append('_token',_token);
-      formnop.append('id_desa',id_desa);
+      formnop.append('id_desa',id_desa+get_blok);
       if(fiscal_parcels)
       {
          formnop.append('fiscal_parcels',fiscal_parcels);
@@ -260,16 +246,17 @@ window.id_desa=id_desa;
       if(buildings)
       {
          formnop.append('buildings',buildings);
-      }
+      } 
       fetch(getdata_nop, { method: 'POST',body:formnop}).then(res => res.json()).then(data => 
       { 
         if(!data.error)
         { 
 
+
             if(data.data_geo.buildings)
             {
                $('input[name="informasi"]').removeAttr('disabled');
-                $('input[name="ubah"]').removeAttr('disabled');
+                $('input[name="ubah"]').removeAttr('disabled'); 
                 loadarraywkt('buildings_',data.data_geo.buildings);
                 informasi_layer('pp_buildings',data.data_geo.buildings);
             }
@@ -292,6 +279,50 @@ window.id_desa=id_desa;
       });
 }
 //load layer with api
+// fungsi legal parsel
+function loaddatalegalparsel(this_)
+{
+   //console.log(this_);
+   if(this_)
+   {
+      
+      var cek_l=0;
+      for(let cek in window)
+      {
+            if(cek.indexOf('legal_parcels_')!=-1)
+            {   
+              window[cek].setVisible(true);
+              cek_l++;
+            } 
+         
+      }  
+      if(cek_l<=0)
+      {
+           // console.log(cek_l);
+            const formlegal   = new FormData(); 
+            formlegal.append('_token',_token);
+            fetch(getlegalparsel, { method: 'POST',body:formlegal}).then(res => res.json()).then(data => 
+            { 
+                     loadarraywkt('legal_parcels_',data.data_legal);
+                     informasi_layer('pp_legal_parcels',data.data_legal); 
+            }); 
+      }
+      
+   }else
+   {
+      for(let cek in window)
+      {
+          if(cek.indexOf('legal_parcels_')!=-1)
+            {   
+              window[cek].setVisible(false); 
+            }  
+      }
+   }
+
+}
+// fungsi legal parsel
+
+
 
 // convert wkt to layer 
 function loadarraywkt(name_wind,data_)
@@ -306,7 +337,8 @@ function loadarraywkt(name_wind,data_)
             var vktor_='';
            if(li_.d_nop)
            {
-               vktor_  =vektor_wkt(wkt,name_wind+li_.id,style_default('D nop :' +li_.d_nop));
+               var lyer_=name_wind+li_.id;
+               vktor_  =vektor_wkt(wkt,lyer_,style_default('D nop :' +li_.d_nop,lyer_));
            }
            else
            {
@@ -320,33 +352,46 @@ function loadarraywkt(name_wind,data_)
       } 
 
    }  
-   window.layer      =l;  
-   var coord_center  =[]; 
-   var get_lyr_coor  =window[fokus_layer].getSource().getFeatures();
-   get_lyr_coor.forEach(function(feat)
+   if(window[fokus_layer]!=undefined)
    {
-      coord_center  =feat.getGeometry().getExtent();
-   });
-   var X = coord_center[0] + (coord_center[2]-coord_center[0])/2;
-   var Y = coord_center[1] + (coord_center[3]-coord_center[1])/2;
-   view.animate({zoom: 4},{center: [X,Y]});
+
+      window.layer      =l;  
+      var coord_center  =[]; 
+      var get_lyr_coor  =window[fokus_layer].getSource().getFeatures();
+      get_lyr_coor.forEach(function(feat)
+      {
+         coord_center  =feat.getGeometry().getExtent();
+      });
+      var X = coord_center[0] + (coord_center[2]-coord_center[0])/2;
+      var Y = coord_center[1] + (coord_center[3]-coord_center[1])/2;
+      view.animate({zoom: 4},{center: [X,Y]});
+   }
 
 }
 //convert wkt to layer
 
 //style default
-function style_default(text_="")
-{ 
- 
+function style_default(text_="",layer="")
+{  
+var color='rgba(13, 187, 227, 0.4)';
+if(layer.indexOf('fiscal_parcels')!=-1)
+{
+ color='rgba(234, 221, 25, 0.4)';
+}
+if(layer.indexOf('buildings')!=-1)
+{
+ color='rgba(219, 26, 26, 0.4)';
+}
+
 return new ol.style.Style
     ({
             stroke  : new ol.style.Stroke
             ({
-                  color: '#e30303',
+                  color: '#000',
                   width: 1
             }),
             fill     : new ol.style.Fill({
-            color    : 'rgba(118, 30, 125, 0.30)'
+            color    : color
             }),
             text: new ol.style.Text({ 
             fill: new ol.style.Fill({
@@ -403,9 +448,11 @@ return vector;
 //bottom informasi 
 function informasi_layer(name_,data_,show=true)
 {
+   $('#pplayer').css('display','none');
    var list_      ='';
    var name_th    =``; 
    window[name_]  =data_;
+//console.log(name_);
    var ojk_neme   =Object.keys(data_[0]); 
    for(let nameky of ojk_neme)
    {
@@ -416,8 +463,9 @@ function informasi_layer(name_,data_,show=true)
    }
    name_th=`<tr><th>aksi</th>`+name_th+`</tr>`;
    for(let v_ of data_)
-   { 
+   {  
       window[name_+'_'+v_.id]=v_; 
+
       list_+=      `<tr><th><input type="checkbox" name="layer_[]" value="`+name_+'_'+v_.id+`" checked="checked"></th></th>`;  
       for(let vk_ of ojk_neme)
       {
@@ -428,18 +476,26 @@ function informasi_layer(name_,data_,show=true)
        }
    list_+=      `</tr>`;
    }
-      var tb_ = `<table class="table table-striped `+name_+`">`+name_th+list_+`</table>`;
+      var tb_ = `<table class="table table-striped `+name_+`">
+      <tr><td colspan="`+ojk_neme.length+`">`+name_.replace('pp_','')+`</td></tr>
+      `+name_th+list_+`</table>`;
+
       if(show)
       {
-         if(!$('#pplayer').find('.table').hasClass(name_))
+         if(!$('#pplayer2').find('.table').hasClass(name_))
          { 
-            $('#pplayer').append(tb_);
+            $('#pplayer2').append(tb_);
          }
       }
       else
       {
-         $('#pplayer').find('.'+name_).remove();
+         $('#pplayer2').find('.'+name_).remove();
       } 
+      if($('#pplayer2').find('.table').length!=0)
+      {
+            $('#pplayer').css('display','flex'); 
+      }
+
 }
 //bottom informasi 
 
@@ -540,17 +596,17 @@ map.on('click', function(evt)
    {
       return;
    }
-for(let cek in window)
-   {
-         if(cek.indexOf('fiscal_parcels_')!=-1 && cek.indexOf('pp_fiscal_parcels_')<=-1)
-         {  
-             window[cek].setStyle(style_default()); 
-         } 
-         if(cek.indexOf('buildings_')!=-1 && cek.indexOf('pp_buildings_')<=-1)
-         { 
-             window[cek].setStyle(style_default()); 
-         } 
-   } 
+      for(let cek in window)
+      {
+            if(cek.indexOf('fiscal_parcels_')!=-1 && cek.indexOf('pp_fiscal_parcels_')<=-1)
+            {  
+                window[cek].setStyle(style_default('',cek)); 
+            } 
+            if(cek.indexOf('buildings_')!=-1 && cek.indexOf('pp_buildings_')<=-1)
+            { 
+                window[cek].setStyle(style_default('',cek)); 
+            } 
+      } 
 
   overlay.setPosition(undefined);
 
@@ -566,12 +622,13 @@ for(let cek in window)
   { 
      window[feature.get('id')].setStyle(highlightStyle); 
      window.edit=feature.get('id');
-      if($('input[name="informasi"]').is(':checked'))
+   // console.log(feature.get('id'));
+      if($('input[name="informasi"]').is(':checked')==true)
       {
         overlay.setPosition(evt.coordinate); 
         isipopup('info',feature.get('id'));
       }
-      if($('input[name="ubah"]').is(':checked'))
+      if($('input[name="ubah"]').is(':checked')&&(window.edit.indexOf('fiscal_parcels')!=-1||window.edit.indexOf('buildings')!=-1))
       {
         overlay.setPosition(evt.coordinate);
         isipopup2('ubah',feature.get('id'));
@@ -588,6 +645,7 @@ function isipopup(aksi,id_)
 
   var id_neme='pp_'+id_; 
   var list_pp='';  
+
    $.each(window[id_neme],function(t,v)
    {
         if(t!='geojson')

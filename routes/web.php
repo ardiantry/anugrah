@@ -18,6 +18,10 @@ Route::post('/simpan-ubah-json', 'HomeController@simpanubahjson')->name('simpanu
 Route::post('/ubah-data-pro', 'HomeController@ubahdatapro')->name('ubahdatapro');
 Route::post('/simpan-data-json-baru', 'HomeController@simpandatajsonbaru')->name('simpandatajsonbaru');
 Route::post('/hapus-layer', 'HomeController@hapus_layer')->name('hapus_layer');
+Route::post('/get-legal-parsel', 'HomeController@getlegalparsel')->name('getlegalparsel');
+Route::post('/get-blok-data', 'HomeController@getblokdata')->name('getblokdata');
+
+
 
 
 

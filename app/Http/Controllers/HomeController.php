@@ -218,4 +218,39 @@ class HomeController extends Controller
         }
         print json_encode(array('error' => false));
     }
+    public function getlegalparsel(Request $request)
+    {
+
+           $data_legal= DB::select('SELECT 
+                                        id,
+                                        nib,
+                                        tipehak,
+                                        penggunaanlahan,
+                                        tataruang,
+                                        ketinggian,
+                                        kemiringan,
+                                        koordinat, 
+                                        ST_AsText(geom) AS geojson  FROM legal_parcels');
+
+             print json_encode(array('data_legal' => $data_legal)); 
+    }
+ public function getblokdata(Request $request)
+    {
+             $get_dt = DB::select('SELECT d_nop FROM fiscal_parcels where d_nop like \'' . $request->input('is_vilage'). '%\'');
+             $i=0;
+             $get_dta=array();
+             foreach ($get_dt as $key ) 
+             {
+                $id_blok=substr($key->d_nop,strlen($request->input('is_vilage')),3); 
+
+               $get_dta[$id_blok]['id_blok']=$id_blok;          
+                $i++;
+             } 
+
+             sort($get_dta);
+             print json_encode(array('get_dt' => $get_dta)); 
+    }
+
+
+
 }
