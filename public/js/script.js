@@ -45,9 +45,9 @@ window.osm=new ol.layer.Tile({
 map.addLayer(window.osm);
 //base osm
 //set height
-var windowHeight  = $( window ).height();
+var windowHeight  = $('.side_bar').height();
                     $('#map').css({
-                    height : (parseInt(windowHeight) - 50)+"px"    
+                    height : (parseInt(windowHeight)+200)+"px"    
                     });
 map.updateSize();  
 //set height
@@ -212,30 +212,45 @@ function loaddata(id_kec,id_desa,get_blok="",fiscal_parcels='',buildings='')
       window.history.pushState({'historycontent':url_}, null,url_); 
       $('input[name="informasi"]').attr('disabled','disabled'); 
       $('input[name="ubah"]').attr('disabled','disabled'); 
- 
+      $('#pplayer').css('display','none');
+      var fiscal=0;
+      var building=0;
+
       for(let cek in window)
       {
             if(cek.indexOf('fiscal_parcels_')!=-1||cek.indexOf('buildings_')!=-1)
             { 
+                 console.log(cek);
                if(cek.indexOf('_fiscal_parcels_')==-1||cek.indexOf('_buildings_')==-1)
                {
                  map.removeLayer(window[cek]);
                   window[cek]=undefined;
                }
-               else
-               {
-                  window[cek]=undefined; 
-               }
+               
 
             } 
-             if(cek.indexOf('_fiscal_parcels_')!=-1||cek.indexOf('_buildings_')!=-1)
+             if(cek.indexOf('_fiscal_parcels_')!=-1)
              {
-               window[cek]=undefined;
-               window[cek]=undefined;
+
+              fiscal++;
+             }
+              if(cek.indexOf('_buildings_')!=-1)
+             {
+              building++;
              }
             
-      }  
- 
+      }
+
+       if(fiscal>0)
+       {
+          $('#pplayer2').find('.pp_fiscal_parcels').remove();
+
+       }
+       if(building>0)
+       {
+          $('#pplayer2').find('.pp_buildings').remove();
+
+       }
       const formnop   = new FormData(); 
       formnop.append('_token',_token);
       formnop.append('id_desa',id_desa+get_blok);
@@ -250,9 +265,7 @@ function loaddata(id_kec,id_desa,get_blok="",fiscal_parcels='',buildings='')
       fetch(getdata_nop, { method: 'POST',body:formnop}).then(res => res.json()).then(data => 
       { 
         if(!data.error)
-        { 
-
-
+        {  
             if(data.data_geo.buildings)
             {
                $('input[name="informasi"]').removeAttr('disabled');
@@ -283,19 +296,26 @@ function loaddata(id_kec,id_desa,get_blok="",fiscal_parcels='',buildings='')
 function loaddatalegalparsel(this_)
 {
    //console.log(this_);
+   $('#pplayer').css('display','none');
+ 
    if(this_)
    {
       
       var cek_l=0;
       for(let cek in window)
       {
-            if(cek.indexOf('legal_parcels_')!=-1)
+            if(cek.indexOf('legal_parcels_')!=-1&&cek.indexOf('_legal_parcels')==-1)
             {   
               window[cek].setVisible(true);
               cek_l++;
             } 
          
       }  
+       
+      if(window['pp_legal_parcels'])
+      {
+          informasi_layer('pp_legal_parcels',window['pp_legal_parcels']); 
+      }
       if(cek_l<=0)
       {
            // console.log(cek_l);
@@ -310,6 +330,7 @@ function loaddatalegalparsel(this_)
       
    }else
    {
+      $('#pplayer2').find('.pp_legal_parcels').remove();
       for(let cek in window)
       {
           if(cek.indexOf('legal_parcels_')!=-1)
@@ -447,8 +468,7 @@ return vector;
 }
 //bottom informasi 
 function informasi_layer(name_,data_,show=true)
-{
-   $('#pplayer').css('display','none');
+{ 
    var list_      ='';
    var name_th    =``; 
    window[name_]  =data_;
@@ -503,15 +523,8 @@ function informasi_layer(name_,data_,show=true)
 $('body').delegate('.klikfokus','click',function(e)
 {
    e.preventDefault(); 
-   var idlayer =$(this).data('idlayer'); 
-     if(window['fiscal_parcels_'+idlayer])
-      {
-        var get_lyr_coor  =window['fiscal_parcels_'+idlayer].getSource().getFeatures();
-      }
-     if(window['buildings_'+idlayer])
-     {
-       var get_lyr_coor  =window['buildings_'+idlayer].getSource().getFeatures();
-     }
+   var idlayer =$(this).closest('tr').find('input[name="layer_[]"]').val();  
+    var get_lyr_coor  =window[idlayer.replace('pp_','')].getSource().getFeatures(); 
         get_lyr_coor.forEach(function(feat) 
         {
         coord_center  =feat.getGeometry().getExtent();
@@ -961,7 +974,55 @@ $('body').delegate('.hapusbentuk','click',function(e)
 
          }); 
 });
+$('body').delegate('#modalunggah','click',function(e)
+{ 
+   e.preventDefault();
+   $('#modalformunggah').modal('show'); 
+});
 
+$('body').delegate('#simpanunggah','submit',function(e)
+{ 
+   e.preventDefault();
+   $('.aler-msg').empty();
+   var form_= document.forms.namedItem("simpanunggah");
+    const oData = new FormData(form_);
+    if (window.XMLHttpRequest) 
+    {
+        var xmlhttp=new XMLHttpRequest();
+    } 
+    else 
+    {  
+        var xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    oData.append('_token',_token); 
+    xmlhttp.responseType    = 'json';
+    xmlhttp.crossDomain     = true;
+    xmlhttp.async           = false;
+    xmlhttp.cache           = false;
+    xmlhttp.contentType     = false;
+    xmlhttp.processData     = false;
+    xmlhttp.open("POST",unggahdata,true);
+    xmlhttp.upload.addEventListener('progress', function(e) {
+            var max     = e.total;
+                var current   = e.loaded;
+                var Percentage  = (current * 100) / max; 
+              $('.aler-msg').html(Percentage+ '%');
+
+                
+    });
+        xmlhttp.onreadystatechange = function() 
+        { 
+           if (this.readyState==4 && this.status==200) 
+          {  
+               $('.aler-msg').empty();
+            window.setTimeout(function() 
+            {  
+            // window.location.reload(); 
+            }, 1000); 
+          }
+        }
+  xmlhttp.send(oData);
+});
 
 
 

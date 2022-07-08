@@ -5,14 +5,15 @@
     width: 100%;
     position: relative;
     }
- #pplayer {
-  position: absolute;
+#pplayer {
+  position: fixed;
   bottom: 0;
   right: 0;
   left: 0;
   z-index: 12;
   background: #fff;
   display: none;
+  box-shadow: 0px 4px 6px 4px rgba(0, 0, 0, 0.5);
 }
 .table td, .table th {
   padding: 1px 5px;
@@ -32,9 +33,10 @@
   position: absolute;
   top: 6px;
   background: rgb(255, 255, 255);
-  left: 21px;
-  width: 113px;
+  left: 4px;
+  width: 121px;
   padding: 9px;
+  z-index: 100;
 }
 .basemap li {
   display: block; 
@@ -168,4 +170,7 @@
 #pplayer2 {
   max-height: 250px;
   overflow-y: auto;
+}
+.side_bar {
+  margin: 25px 0px 200px 25px;
 }

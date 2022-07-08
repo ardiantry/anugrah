@@ -20,6 +20,8 @@ Route::post('/simpan-data-json-baru', 'HomeController@simpandatajsonbaru')->name
 Route::post('/hapus-layer', 'HomeController@hapus_layer')->name('hapus_layer');
 Route::post('/get-legal-parsel', 'HomeController@getlegalparsel')->name('getlegalparsel');
 Route::post('/get-blok-data', 'HomeController@getblokdata')->name('getblokdata');
+Route::post('/unggahdata', 'HomeController@unggahdata')->name('unggahdata');
+
 
 
 

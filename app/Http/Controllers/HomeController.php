@@ -250,7 +250,41 @@ class HomeController extends Controller
              sort($get_dta);
              print json_encode(array('get_dt' => $get_dta)); 
     }
+ public function unggahdata(Request $request)
+    {
+    ini_set('upload_max_filesize', '500M'); 
+    ini_set('post_max_size', '550M');
+    ini_set('memory_limit', '1024M');
+    ini_set('max_input_time', 3000);
+    ini_set('max_execution_time', 3000);
 
+
+
+    $file           = $request->file('csv'); 
+    $file->move(public_path('csv'), $file->getClientOriginalName());
+        if(file_exists(public_path('csv/'.$file->getClientOriginalName())))
+            {
+                $tempPath           = public_path('csv/'.$file->getClientOriginalName()); 
+                $filefopen          = fopen($tempPath,"r");
+                $importData_arr     = array();
+                $i = 0;
+                while (($filedata = fgetcsv($filefopen, 1000, ",")) !== FALSE) 
+                {
+                    $num = count($filedata );
+                    for ($c=0; $c < $num; $c++) 
+                    {
+                            $importData_arr[$i][] = $filedata [$c];
+                    }
+                    $i++;
+                }
+                fclose($filefopen);
+                 
+            }
+  //  $file_telah_ada = array_merge(array(),glob(public_path('csv').'\{,.}*', GLOB_BRACE));
+
+
+        
+    }
 
 
 }

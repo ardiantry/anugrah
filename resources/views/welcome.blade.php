@@ -50,43 +50,85 @@
                     <button class="btn btn-success btn-blok" type="submit" >Sampilkan</button>
                  </div>  
             </form>
-           </div>  
-             
-    </div> 
-    <div class="col-md-10"> 
-        <div id="map" class="map"> 
-          
-          <div class="row" id="pplayer">
-                <div class="col-md-2 col-lg-2 col-sm-2 col-xs-2 navtools" >    
-                    <ul>
-                    <li><input type="checkbox" name="informasi" value="informasi" disabled="disabled"> Informasi</li>
-                    @if(@Auth::user()->id)
-                    <li><input type="checkbox" name="ubah" value="ubah" disabled="disabled"> Ubah</li>
-                    <li><input type="checkbox" name="buatlayer" value="buatlayer"> Buat Layer</li> 
-                    @endif
-                    </ul> 
-                </div>
 
-                    <div class="col-md-10 col-lg-10 col-sm-10 col-xs-12" id="pplayer2">  
-                    </div>
-                </div>  
-                <div class="btnsimpan"></div> 
-                <div id="popup" class="ol-popup">
-                    <a href="#" id="popup-closer" class="ol-popup-closer"></a>
-                    <div id="popup-content"> 
-                        <table class="table infolayer"></table>
-                        <div class="ubahlayer"></div>
-                    </div>
-                </div> 
-          </div>
+            <div class="form-group clr_l">
+                  <span class="Land_use_clr"></span> 
+                    <label>Land_use</label> 
+                   <div class="form-control">
+                        <input type="checkbox" name="Land_use" value="1">
+                  </div>
+            </div> 
+             <div class="form-group clr_l">
+                  <span class="Land_use_clr"></span> 
+                    <label>JaringanJalan</label> 
+                   <div class="form-control">
+                        <input type="checkbox" name="JaringanJalan" value="1">
+                  </div>
+            </div> 
+             <div class="form-group clr_l">
+                  <span class="Land_use_clr"></span> 
+                    <label>Jaringan PDAM</label> 
+                   <div class="form-control">
+                        <input type="checkbox" name="JaringanPDAM" value="1">
+                  </div>
+            </div>  
+            <div class="form-group clr_l">
+                  <span class="Land_use_clr"></span> 
+                    <label>JaringanListrik</label> 
+                   <div class="form-control">
+                        <input type="checkbox" name="JaringanListrik" value="1">
+                  </div>
+            </div> 
+            <div class="form-group clr_l">
+                  <span class="Land_use_clr"></span> 
+                    <label>DataWajibPajak</label> 
+                   <div class="form-control">
+                        <input type="checkbox" name="DataWajibPajak" value="1">
+                  </div>
+            </div>  
+        @if(@Auth::user()->id)
+        <a href="#" id="modalunggah">unggah data</a>
+        @endif
+            
+       </div>   
+    </div>  
+    <div class="col-md-10"> 
+        <div id="map" class="map">  
           <ul class="basemap">
             <li><input type="radio" name="base"  value="satelite"> Satelite</li>
             <li><input type="radio" name="base" value="osm" checked="checked"> OSM</li>
             <li><input type="radio" name="base" value="raster"> Raster</li> 
           </ul>
-
     </div> 
 </div>
+
+<div class="row" id="pplayer">
+      <div class="col-md-2 col-lg-2 col-sm-2 col-xs-2 navtools" >    
+          <ul>
+          <li><input type="checkbox" name="informasi" value="informasi" disabled="disabled"> Informasi</li>
+          @if(@Auth::user()->id)
+          <li><input type="checkbox" name="ubah" value="ubah" disabled="disabled"> Ubah</li>
+          <li><input type="checkbox" name="buatlayer" value="buatlayer"> Buat Layer</li> 
+          @endif
+          </ul> 
+      </div>
+
+          <div class="col-md-10 col-lg-10 col-sm-10 col-xs-12" id="pplayer2">  
+          </div>
+      </div>  
+      <div class="btnsimpan"></div> 
+      <div id="popup" class="ol-popup">
+          <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+          <div id="popup-content"> 
+              <table class="table infolayer"></table>
+              <div class="ubahlayer"></div>
+          </div>
+      </div> 
+</div>
+
+
+
+
 <div id="modalpagedata" class="modal fade" role="dialog">
     <div class="modal-dialog modal-sm"> 
         <div class="modal-content"> 
@@ -125,6 +167,36 @@
 
     </div>
 </div>
+
+<div id="modalformunggah" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-sm"> 
+        <div class="modal-content">  
+                <div class="modal-body">
+                  <form id="simpanunggah"  name="simpanunggah">
+                    <div class="aler-msg"></div>
+                    <div class="form-group"> 
+                        <label>Unggah file</label>
+                        <input type="file" name="csv" class="form-control">
+                    </div> 
+                    <div class="form-group"> 
+                        <label>Tabel yg ingin di insert</label>
+                        <select class="form-control" name="jenis_tabel"> 
+                          <option value="fiscal_parcels">fiscal_parcels</option>
+                          <option value="buildings">buildings</option> 
+                          <option value="Legal_parcels">Legal_parcels</option> 
+                        </select>
+                    </div>
+                     <div class="form-group"> 
+                      <button type="submit" class="btn btn-success btn-sm">simpan</button>
+                     </div>
+                  </form>
+                </div>
+                <div class="modal-footer">   
+                </div>
+        </div>
+
+    </div>
+</div>
 <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.14.1/build/ol.js"></script>
 <script src="{{asset('js/jsts.min.js')}}"></script> 
 <script type="text/javascript"> 
@@ -137,6 +209,8 @@
          var hapus_layer          ='{{route('hapus_layer')}}';
          var getlegalparsel       ='{{route('getlegalparsel')}}'; 
          var getblokdata          ='{{route('getblokdata')}}'; 
+         var unggahdata          ='{{route('unggahdata')}}'; 
+
 
          
 
