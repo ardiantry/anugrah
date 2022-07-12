@@ -68,14 +68,14 @@
                               <input type="checkbox" name="JaringanJalan" value="1">
                              <div class="form-control">
                                 <label>JaringanJalan</label> 
-                                <div class="Land_use_clr"></div> 
+                                <div class="Land_jln_clr"></div> 
                             </div>
                       </div> 
                        <div class="form-group clr_l">
                              <input type="checkbox" name="JaringanPDAM" value="1">
                              <div class="form-control">
                                 <label>Jaringan PDAM</label> 
-                                <div class="Land_use_clr"></div> 
+                                <div class="pdam_clr"></div> 
                             </div>
                       </div>  
                       <div class="form-group clr_l">
@@ -216,6 +216,11 @@
          var getblokdata          ='{{route('getblokdata')}}'; 
          var unggahdata           ='{{route('unggahdata')}}'; 
          var getland_use          ='{{route('getland_use')}}'; 
+         var getjaringanjalans    ='{{route('getjaringanjalans')}}'; 
+         var getjaringanpln       ='{{route('getjaringanpln')}}';  
+
+
+
          var nilai_zoom           ='{{@env('nilai_zoom')?@env('nilai_zoom'):4}}'; 
 
          

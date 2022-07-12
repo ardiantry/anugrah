@@ -303,13 +303,43 @@ class HomeController extends Controller
                                         idlahan,
                                         tema,
                                         jenis,
-                                        kegiatan,
-                                        sumber,
+                                        kegiatan, 
                                         sumber, 
                                         ST_AsText(geom) AS geojson  FROM land_uses');
 
              print json_encode(array('land_uses' => $land_uses)); 
     }
+
+    public function getjaringanjalans(Request $request)
+    {
+
+           $jalans= DB::select('SELECT 
+                                        id,
+                                        kodeinfra,
+                                        namaruas,
+                                        fungsi,
+                                        tahundata,
+                                        lebarkeras, 
+                                        ST_AsText(geom) AS geojson  FROM jalans');
+
+             print json_encode(array('jalans' => $jalans)); 
+    }
+    public function getjaringanpln(Request $request)
+    {
+
+           $jaringanpln= DB::select('SELECT 
+                                        id,
+                                        handle,
+                                        keterangan,
+                                        ST_AsText(geom) AS geojson  FROM jaringan_plns');
+
+             print json_encode(array('jaringanpln' => $jaringanpln)); 
+    }
+
+
+
+
+
  public function getblokdata(Request $request)
     {
              $get_dt = DB::select('SELECT d_nop FROM fiscal_parcels where d_nop like \'' . $request->input('is_vilage'). '%\'');

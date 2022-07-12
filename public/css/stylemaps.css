@@ -190,6 +190,18 @@
   padding: 15px;
   margin: 5px;
 }
+.Land_use_clr {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  background: rgba(41, 43, 183, 0.87);
+}
+.Land_jln_clr {
+  width: 2px;
+  height: 18px;
+  background: #2d995b;
+  transform: rotate(-36deg);
+}
 @media(max-width: 500px)
 {
   #pplayer

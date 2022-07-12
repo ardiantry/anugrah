@@ -351,56 +351,175 @@ function loaddatalegalparsel(this_)
  // Land_use
 $('body').delegate('input[name="Land_use"]','change',function(e)
 {
-e.preventDefault();  
-if($(this).is(':checked'))
+   e.preventDefault();  
+   var this_land=$(this);
+   landuses(this_land);
+});
+$('body').delegate('input[name="JaringanJalan"]','change',function(e)
 {
-      var cek_l=0;
-      for(let cek in window)
-      {
-           if(cek.indexOf('land_uses_')!=-1)
-           {   
-             window[cek].setVisible(true);
-             cek_l++;
-           } 
-        
-      }  
-
-      if(window['land_usespp'])
-      {
-         informasi_layer('land_usespp',window['land_usespp']); 
-      }
-      if(cek_l<=0)
-      { 
-         const formuse   = new FormData(); 
-         formuse.append('_token',_token);
-         fetch(getland_use, { method: 'POST',body:formuse}).then(res => res.json()).then(data => 
-         { 
-                  loadarraywkt('land_uses_',data.land_uses);
-                  informasi_layer('land_usespp',data.land_uses); 
-         }); 
-      } 
-
-} 
-else
-{ 
-      for(let cek in window)
-      {
-         if(cek.indexOf('land_uses_')!=-1)
-           {   
-                 window[cek].setVisible(false); 
-           }  
-      }
-      if(window['land_usespp'])
-      {
-         informasi_layer('land_usespp',window['land_usespp'],false); 
-      }
-}
-
+   e.preventDefault();  
+   var this_Jalan=$(this);
+   JaringanJalan(this_Jalan);
+});
+$('body').delegate('input[name="JaringanPDAM"]','change',function(e)
+{
+   e.preventDefault();  
+   var this_pdam=$(this);
+   JaringanJalan(this_pdam);
 });
 
+var this_land=$('input[name="Land_use"]');
+landuses(this_land);
+var this_Jalan=$('input[name="JaringanJalan"]');
+JaringanJalan(this_Jalan);
+var this_pdam=$('input[name="JaringanPDAM"]');
+Jaringan_PDAM(this_pdam)
 
 
 
+function landuses(this_)
+{
+   if(this_.is(':checked'))
+   {
+         var cek_l=0;
+         for(let cek in window)
+         {
+              if(cek.indexOf('land_uses_')!=-1)
+              {   
+                window[cek].setVisible(true);
+                cek_l++;
+              } 
+           
+         }  
+
+         if(window['land_usespp'])
+         {
+            informasi_layer('land_usespp',window['land_usespp']); 
+         }
+         if(cek_l<=0)
+         { 
+            const formuse   = new FormData(); 
+            formuse.append('_token',_token);
+            fetch(getland_use, { method: 'POST',body:formuse}).then(res => res.json()).then(data => 
+            { 
+                     loadarraywkt('land_uses_',data.land_uses);
+                     informasi_layer('land_usespp',data.land_uses); 
+            }); 
+         } 
+
+   } 
+   else
+   { 
+         for(let cek in window)
+         {
+            if(cek.indexOf('land_uses_')!=-1)
+              {   
+                    window[cek].setVisible(false); 
+              }  
+         }
+         if(window['land_usespp'])
+         {
+            informasi_layer('land_usespp',window['land_usespp'],false); 
+         }
+   }
+
+}
+
+function JaringanJalan(this_)
+{
+      if(this_.is(':checked'))
+      {
+         var cek_l=0;
+         for(let cek in window)
+         {
+              if(cek.indexOf('jaringan_jalans_')!=-1)
+              {   
+               console.log(cek);
+                window[cek].setVisible(true);
+                cek_l++;
+              } 
+           
+         }  
+         if(window['jaringan_jalanspp'])
+         {
+            informasi_layer('jaringan_jalanspp',window['jaringan_jalanspp']); 
+         }
+         if(cek_l<=0)
+         { 
+            const formalans   = new FormData(); 
+            formalans.append('_token',_token);
+            fetch(getjaringanjalans, { method: 'POST',body:formalans}).then(res => res.json()).then(data => 
+            { 
+                  loadarraywkt('jaringan_jalans_',data.jalans);
+                  informasi_layer('jaringan_jalanspp',data.jalans); 
+            }); 
+         } 
+      } 
+      else
+      { 
+            for(let cek in window)
+            {
+               if(cek.indexOf('jaringan_jalans_')!=-1)
+                 {   
+                       window[cek].setVisible(false); 
+                 }  
+            }
+
+            if(window['jaringan_jalanspp'])
+            {
+               informasi_layer('jaringan_jalanspp',window['jaringan_jalanspp'],false); 
+            }
+      }
+
+}
+
+function Jaringan_PDAM(this_)
+{
+      if(this_.is(':checked'))
+      {
+         var cek_l=0;
+         for(let cek in window)
+         {
+              if(cek.indexOf('Jaringan_pdms_')!=-1)
+              {   
+           
+                window[cek].setVisible(true);
+                cek_l++;
+              } 
+           
+         }  
+         if(window['Jaringan_pdmspp'])
+         {
+            informasi_layer('Jaringan_pdmspp',window['Jaringan_pdmspp']); 
+         }
+         if(cek_l<=0)
+         { 
+            const formalans   = new FormData(); 
+            formalans.append('_token',_token);
+            fetch(getjaringanpln, { method: 'POST',body:formalans}).then(res => res.json()).then(data => 
+            { 
+                  loadarraywkt('Jaringan_pdms_',data.jaringanpln);
+                  informasi_layer('Jaringan_pdmspp',data.jaringanpln); 
+            }); 
+         } 
+      } 
+      else
+      { 
+            for(let cek in window)
+            {
+               if(cek.indexOf('Jaringan_pdms_')!=-1)
+                 {   
+                       window[cek].setVisible(false); 
+                 }  
+            }
+
+            if(window['Jaringan_pdmspp'])
+            {
+               informasi_layer('Jaringan_pdmspp',window['Jaringan_pdmspp'],false); 
+            }
+      }
+
+}
 // convert wkt to layer 
 function loadarraywkt(name_wind,data_)
 {
@@ -455,6 +574,8 @@ function style_default(text_="",layer="")
 {  
  
 var color='rgba(13, 187, 227, 0.4)';
+var fill='#000';
+
 if(layer.indexOf('fiscal_parcels')!=-1)
 {
  color='rgba(234, 221, 25, 0.4)';
@@ -463,16 +584,19 @@ if(layer.indexOf('buildings')!=-1)
 {
  color='rgba(219, 26, 26, 0.4)';
 }
-if(layer.indexOf('land_use')!=-1)
+if(layer.indexOf('land_uses')!=-1)
 {
  color='rgba(20, 69, 217, 0.63)';
 }
-
+if(layer.indexOf('jaringan_jalans')!=-1)
+{
+ fill='#2d995b';
+}
 return new ol.style.Style
     ({
             stroke  : new ol.style.Stroke
             ({
-                  color: '#000',
+                  color: fill,
                   width: 1
             }),
             fill     : new ol.style.Fill({
