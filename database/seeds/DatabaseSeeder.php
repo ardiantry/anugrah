@@ -15,7 +15,11 @@ class DatabaseSeeder extends Seeder
          					UsersTableSeeder::class,
          					BuildingSeeder::class,
          					FiscalParcelSeeder::class,
-         					LegalParcelSeeder::class
+         					LegalParcelSeeder::class, 
+                            JalanSeeder::class,
+                            LandUseSeeder::class,
+                            JaringanPdamSeeder::class,
+                            JaringanPlnSeeder::class
          				]);
     }
 }

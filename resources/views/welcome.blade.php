@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="{{asset('css/stylemaps.css')}}" type="text/css"> 
     <!-- side bar -->
 <div class="row"> 
-    <div class="col-md-2"> 
+    <div class="col-md-3"> 
         <div  class="side_bar"> 
             <form id="nop" name="nop">
                 <div class="form-group row">
@@ -26,73 +26,77 @@
                   </div>
                 </div> 
                 <div class="form-group clr_l">
-                    <span class="Fiscal_parcels_clr"></span> 
-                    <label>Fiscal_parcels</label> 
+                    <input type="checkbox" name="fiscal_parcels" value="1"> 
                     <div class="form-control">
-                        <input type="checkbox" name="fiscal_parcels" value="1"> 
+                        <label>Fiscal_parcels</label> 
+                        <div class="color_ Fiscal_parcels_clr"></div> 
                     </div>
                 </div>  
                 <div class="form-group clr_l">
-                      <span class="buildings_clr"></span>
-                      <label>Buildings</label> 
+                     <input type="checkbox" name="buildings" value="1">
                         <div class="form-control">
-                            <input type="checkbox" name="buildings" value="1">
+                            <label>Buildings</label> 
+                            <div class="color_ buildings_clr"></div> 
                         </div>
                 </div>    
                 <div class="form-group clr_l">
-                      <span class="Legal_parcels_clr"></span> 
-                        <label>Legal_parcels</label> 
-                       <div class="form-control">
-                            <input type="checkbox" name="Legal_parcels" value="1">
+                          <input type="checkbox" name="Legal_parcels" value="1">
+                           <div class="form-control">
+                          <label>Legal_parcels</label> 
+                          <div class="color_ Legal_parcels_clr"></div> 
                       </div>
                   </div>  
-                 <div class="form-group">
-                    <button class="btn btn-success btn-blok" type="submit" >Sampilkan</button>
+                 <div class="input-group">
+                    <button class="btn btn-success btn-sm" type="submit" ><i class="fa fa-search"></i> Tampilkan</button>
+                    @if(@Auth::user()->id)
+                    <span class="input-group-append"> 
+                      <a href="#" class="btn btn-primary btn-sm" id="modalunggah">unggah data</a>
+                    </span>
+                    @endif
                  </div>  
             </form>
-
-            <div class="form-group clr_l">
-                  <span class="Land_use_clr"></span> 
-                    <label>Land_use</label> 
-                   <div class="form-control">
-                        <input type="checkbox" name="Land_use" value="1">
-                  </div>
+            <div class="border">
+              
+                      <div class="form-group clr_l">
+                            <input type="checkbox" name="Land_use" value="1">
+                             <div class="form-control">
+                                  <label>Land_use</label> 
+                                <div class="Land_use_clr"></div> 
+                            </div>
+                      </div> 
+                       <div class="form-group clr_l">
+                              <input type="checkbox" name="JaringanJalan" value="1">
+                             <div class="form-control">
+                                <label>JaringanJalan</label> 
+                                <div class="Land_use_clr"></div> 
+                            </div>
+                      </div> 
+                       <div class="form-group clr_l">
+                             <input type="checkbox" name="JaringanPDAM" value="1">
+                             <div class="form-control">
+                                <label>Jaringan PDAM</label> 
+                                <div class="Land_use_clr"></div> 
+                            </div>
+                      </div>  
+                      <div class="form-group clr_l">
+                                  <input type="checkbox" name="JaringanListrik" value="1">
+                             <div class="form-control">
+                                <label>JaringanListrik</label> 
+                                <div class="Land_use_clr"></div> 
+                            </div>
+                      </div> 
+                      <div class="form-group clr_l">
+                                  <input type="checkbox" name="DataWajibPajak" value="1">
+                             <div class="form-control">
+                              <label>DataWajibPajak</label> 
+                              <div class="Land_use_clr"></div> 
+                            </div>
+                      </div>  
             </div> 
-             <div class="form-group clr_l">
-                  <span class="Land_use_clr"></span> 
-                    <label>JaringanJalan</label> 
-                   <div class="form-control">
-                        <input type="checkbox" name="JaringanJalan" value="1">
-                  </div>
-            </div> 
-             <div class="form-group clr_l">
-                  <span class="Land_use_clr"></span> 
-                    <label>Jaringan PDAM</label> 
-                   <div class="form-control">
-                        <input type="checkbox" name="JaringanPDAM" value="1">
-                  </div>
-            </div>  
-            <div class="form-group clr_l">
-                  <span class="Land_use_clr"></span> 
-                    <label>JaringanListrik</label> 
-                   <div class="form-control">
-                        <input type="checkbox" name="JaringanListrik" value="1">
-                  </div>
-            </div> 
-            <div class="form-group clr_l">
-                  <span class="Land_use_clr"></span> 
-                    <label>DataWajibPajak</label> 
-                   <div class="form-control">
-                        <input type="checkbox" name="DataWajibPajak" value="1">
-                  </div>
-            </div>  
-        @if(@Auth::user()->id)
-        <a href="#" id="modalunggah">unggah data</a>
-        @endif
             
        </div>   
     </div>  
-    <div class="col-md-10"> 
+    <div class="col-md-9"> 
         <div id="map" class="map">  
           <ul class="basemap">
             <li><input type="radio" name="base"  value="satelite"> Satelite</li>
@@ -155,6 +159,7 @@
                       <select name="nama_db" class="form-control">
                         <option value="fiscal_parcels">fiscal_parcels</option>
                         <option value="buildings">buildings</option>
+                        <option value="legal_parcels">Legal_parcels</option> 
                       </select>
                       <button type="submit" class="btn btn-success">Simpan</button>
                     </div> 
@@ -183,7 +188,7 @@
                         <select class="form-control" name="jenis_tabel"> 
                           <option value="fiscal_parcels">fiscal_parcels</option>
                           <option value="buildings">buildings</option> 
-                          <option value="Legal_parcels">Legal_parcels</option> 
+                          <option value="legal_parcels">Legal_parcels</option> 
                         </select>
                     </div>
                      <div class="form-group"> 
@@ -209,8 +214,9 @@
          var hapus_layer          ='{{route('hapus_layer')}}';
          var getlegalparsel       ='{{route('getlegalparsel')}}'; 
          var getblokdata          ='{{route('getblokdata')}}'; 
-         var unggahdata          ='{{route('unggahdata')}}'; 
-
+         var unggahdata           ='{{route('unggahdata')}}'; 
+         var getland_use          ='{{route('getland_use')}}'; 
+         var nilai_zoom           ='{{@env('nilai_zoom')?@env('nilai_zoom'):4}}'; 
 
          
 
@@ -219,6 +225,8 @@
          var get_id_blok          ='{{@$app->request->input('id_blok')}}';
          var get_fiscal_parcels   ='{{@$app->request->input('fiscal_parcels')}}';
          var get_buildings        ='{{@$app->request->input('buildings')}}';
+         var get_legal_parcels   ='{{@$app->request->input('legal_parcels')}}';
+
 
 
 </script>

@@ -1,5 +1,7 @@
 
-
+.bg-white {
+  background-color: #1b7fea !important;
+}
     .map {
     height: 400px;
     width: 100%;
@@ -8,12 +10,11 @@
 #pplayer {
   position: fixed;
   bottom: 0;
-  right: 0;
-  left: 0;
-  z-index: 12;
+  right: 0px; 
+    z-index: 12;
   background: #fff;
   display: none;
-  box-shadow: 0px 4px 6px 4px rgba(0, 0, 0, 0.5);
+  box-shadow: 12px 5px 8px 5px rgba(0, 0, 0, 0.5);
 }
 .table td, .table th {
   padding: 1px 5px;
@@ -33,10 +34,10 @@
   position: absolute;
   top: 6px;
   background: rgb(255, 255, 255);
-  left: 4px;
   width: 121px;
   padding: 9px;
   z-index: 100;
+  right: 9px;
 }
 .basemap li {
   display: block; 
@@ -112,12 +113,12 @@
   background: rgba(9, 7, 7, 0.53);
   color: #fff;
 }
-  .btnsimpan {
+.btnsimpan {
   position: absolute;
   z-index: 10;
-  right: 36px;
-  top: 13px;
-}  
+  right: 14px;
+  top: 190px;
+}
 #modalpagedata td {
   font-size: 15px;
 }
@@ -135,14 +136,22 @@
   position: relative;
   margin-left: 20px;
 }    
-.clr_l span {
-  position: absolute;
+.clr_l .color_ { 
   width: 20px;
   height: 20px; 
-  top: 38px;
-  left: -25px;
+  top: 40px;
+  left: 5px;
 }
-
+.clr_l input {
+  position: absolute;
+  top: 12px;
+  lr: ;
+  left: -20px;
+}
+.side_bar
+{
+  overflow-y:auto; 
+}
 .Fiscal_parcels_clr{
   background: rgba(234, 221, 25, 0.77);
  }
@@ -157,6 +166,7 @@
 #nop {
   border: 1px solid #ccc;
   padding: 15px;
+  margin: 5px;
 }
  
  .btn-blok {
@@ -171,6 +181,22 @@
   max-height: 250px;
   overflow-y: auto;
 }
-.side_bar {
-  margin: 25px 0px 200px 25px;
+
+.clr_l .form-control {
+  height: unset;
+}
+.border {
+  border: 1px solid #dee2e6 !important;
+  padding: 15px;
+  margin: 5px;
+}
+@media(max-width: 500px)
+{
+  #pplayer
+  {
+    display: none!important;
+  }
+  .side_bar {
+  max-height: 160px!important;
+}
 }

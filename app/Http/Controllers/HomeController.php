@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use DB;
-
+use Carbon\Carbon;
 class HomeController extends Controller
 {
     /**
@@ -71,15 +71,17 @@ class HomeController extends Controller
             $id_ = str_replace('buildings_', '',  $request->input('id_layer'));
             $get_dt = DB::table('buildings')->select('idbgn', 'id', 'd_nop', 'blok', 'no', 'njopbgn', 'luasbgn', 'njopbgnm2')->where('id', $id_)->first();
         }
-
+        if (preg_match("/legal_parcels_/i", $request->input('id_layer'))) {
+            $id_ = str_replace('legal_parcels_', '',  $request->input('id_layer'));
+            $get_dt = DB::table('legal_parcels')->select('id', 'nib', 'tipehak', 'penggunaanlahan', 'tataruang', 'ketinggian', 'kemiringan')->where('id', $id_)->first();
+        }
         $pol = explode('POLYGON', $data_json);
         $i = 0;
         $ii = 0;
-        foreach ($pol as $key) {
+        foreach ($pol as $key) 
+        {
             if ($key) {
-                $geom = 'Polygon' . trim($pol[$i], ",");
-
-
+                $geom = 'Polygon' . trim($pol[$i], ","); 
                 //echo $geom;
                 if (preg_match("/fiscal_parcels_/i", $request->input('id_layer'))) {
                     if ($ii == 0) {
@@ -99,7 +101,6 @@ class HomeController extends Controller
                     }
                 }
                 if (preg_match("/buildings_/i", $request->input('id_layer'))) {
-
                     if ($ii == 0) {
                         DB::table('buildings')->where('id', @$get_dt->id)->update(['geom' => $geom]);
                     } else {
@@ -115,6 +116,25 @@ class HomeController extends Controller
                         ]);
                     }
                 }
+                if (preg_match("/legal_parcels_/i", $request->input('id_layer'))) {
+                    if ($ii == 0) 
+                    {
+                        DB::table('legal_parcels')->where('id', @$get_dt->id)->update(['geom' => $geom]);
+                    } 
+                    else 
+                    {
+                        DB::table('legal_parcels')->insert([
+                            'geom'                  => $geom,
+                            'nib'                   => @$get_dt->nib.'-copy-'.$ii,
+                            'tipehak'               => @$get_dt->tipehak,
+                            'penggunaanlahan'       => @$get_dt->penggunaanlahan,
+                            'tataruang'             => @$get_dt->tataruang,
+                            'ketinggian'            => @$get_dt->ketinggian,
+                            'kemiringan'            => @$get_dt->kemiringan
+                        ]);
+                    }
+                }
+
                 $ii++;
             }
             $i++;
@@ -132,7 +152,8 @@ class HomeController extends Controller
         $pol            = explode('POLYGON', $data_json);
         $polygon        = @$pol[1] ? 'Polygon' . @$pol[1] : false;
 
-        if ($polygon != false) {
+        if ($polygon != false) 
+        {
             if (preg_match("/fiscal_parcels_/i", $request->input('id_layer'))) {
                 $id_ =   str_replace('fiscal_parcels_', '', $request->input('id_layer'));
 
@@ -146,6 +167,13 @@ class HomeController extends Controller
                 $get_dt = DB::table('buildings')->select('id')->where('id', $id_)->first();
                 if (@$get_dt->id) {
                     DB::table('buildings')->where('id', @$get_dt->id)->update(['geom' => $polygon]);
+                }
+            }
+            if (preg_match("/legal_parcels_/i", $request->input('id_layer'))) {
+                $id_ = str_replace('legal_parcels_', '',  $request->input('id_layer'));
+                $get_dt = DB::table('legal_parcels')->select('id')->where('id', $id_)->first();
+                if (@$get_dt->id) {
+                    DB::table('legal_parcels')->where('id', @$get_dt->id)->update(['geom' => $polygon]);
                 }
             }
         }
@@ -183,6 +211,20 @@ class HomeController extends Controller
 
             ]);
         }
+        if (preg_match("/legal_parcels_/i", $request->input('id_layer'))) 
+         { 
+            $id_ = str_replace('legal_parcels_', '',  $request->input('id_layer'));
+            DB::table('legal_parcels')->where('id', $id_)->update([ 
+                'nib'                   => @$request->nib,
+                'tipehak'               => @$request->tipehak,
+                'penggunaanlahan'       => @$request->penggunaanlahan,
+                'tataruang'             => @$request->tataruang,
+                'ketinggian'            => @$request->ketinggian,
+                'kemiringan'            => @$request->kemiringan
+
+            ]);
+        }
+        
         print json_encode(array('error' => false));
     }
     public function simpandatajsonbaru(Request $request)
@@ -194,11 +236,23 @@ class HomeController extends Controller
         $get_dt         = array();
         $pol            = explode('POLYGON', $data_json);
         $polygon        = @$pol[1] ? 'Polygon' . @$pol[1] : false;
-        if ($polygon) {
-            DB::table(@$request->db)->insert([
-                'd_nop'     => @$request->data_titik,
-                'geom'      => $polygon
-            ]);
+        if ($polygon) 
+        {
+            if (preg_match("/legal_parcels/i", @$request->db)) 
+            {
+             DB::table(@$request->db)->insert([
+                    'nib'       => Carbon::now()->format('dhis'),
+                    'geom'      => $polygon
+                ]);
+            }
+            else
+            {
+
+                DB::table(@$request->db)->insert([
+                    'd_nop'     => @$request->data_titik,
+                    'geom'      => $polygon
+                ]);
+            }
         }
         print json_encode(array('error' => false));
     }
@@ -215,6 +269,11 @@ class HomeController extends Controller
 
             $id_ = str_replace('buildings_', '',  $request->input('data_id'));
             DB::table('buildings')->where('id', $id_)->delete();
+        }
+        if (preg_match("/legal_parcels_/i", $request->input('data_id'))) {
+
+            $id_ = str_replace('legal_parcels_', '',  $request->input('data_id'));
+            DB::table('legal_parcels')->where('id', $id_)->delete();
         }
         print json_encode(array('error' => false));
     }
@@ -233,6 +292,23 @@ class HomeController extends Controller
                                         ST_AsText(geom) AS geojson  FROM legal_parcels');
 
              print json_encode(array('data_legal' => $data_legal)); 
+    }
+
+
+    public function getland_use(Request $request)
+    {
+
+           $land_uses= DB::select('SELECT 
+                                        id,
+                                        idlahan,
+                                        tema,
+                                        jenis,
+                                        kegiatan,
+                                        sumber,
+                                        sumber, 
+                                        ST_AsText(geom) AS geojson  FROM land_uses');
+
+             print json_encode(array('land_uses' => $land_uses)); 
     }
  public function getblokdata(Request $request)
     {

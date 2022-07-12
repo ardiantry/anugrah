@@ -45,11 +45,15 @@ window.osm=new ol.layer.Tile({
 map.addLayer(window.osm);
 //base osm
 //set height
-var windowHeight  = $('.side_bar').height();
+var windowHeight  = $(window).height();
                     $('#map').css({
-                    height : (parseInt(windowHeight)+200)+"px"    
+                    height : (parseInt(windowHeight)-50)+"px"    
                     });
 map.updateSize();  
+
+$('.side_bar').css('max-height',windowHeight-20+'px');
+var widt_side=$('.side_bar').width();
+$('#pplayer').css('left',widt_side+'px');
 //set height
 
 //base google
@@ -94,14 +98,18 @@ if(get_id_kec!='')
    if(get_fiscal_parcels)
    {
 
-      $('input[name="fiscal_parcels"]').prop('checked',true);
+    $('input[name="fiscal_parcels"]').prop('checked',true);
    }
     if(get_buildings)
    {
       $('input[name="buildings"]').prop('checked',true);
    }
+   if(get_legal_parcels)
+   {
+    $('input[name="Legal_parcels"]').prop('checked',true);
+   }
 
-     loaddata(get_id_kec,get_id_kel,get_id_blok,get_fiscal_parcels,get_buildings);
+     loaddata(get_id_kec,get_id_kel,get_id_blok,get_fiscal_parcels,get_buildings,get_legal_parcels);
 
 
 }
@@ -175,6 +183,7 @@ $('body').delegate('#nop','submit',function(e)
   e.preventDefault(); 
    var fiscal_parcels='';
    var buildings='';
+   var legal_parcels='';
    var id_desa=$('select[name="id_desa"]').val(); 
    if(!id_desa)
    {
@@ -189,68 +198,58 @@ $('body').delegate('#nop','submit',function(e)
    { 
       var buildings=1;
    } 
-   var get_kec=$('select[name="id_kec"]').val();
-   var get_blok=$('select[name="id_blok"]').val();
 
-   loaddata(get_kec,id_desa,get_blok,fiscal_parcels,buildings);
-   loaddatalegalparsel($('input[name="Legal_parcels"]').is(':checked'));
+   if($('input[name="Legal_parcels"]').is(':checked'))
+   {
+     var legal_parcels =1;
+   }
+   var get_kec=$('select[name="id_kec"]').val();
+   var get_blok=$('select[name="id_blok"]').val(); 
+   loaddata(get_kec,id_desa,get_blok,fiscal_parcels,buildings,legal_parcels);
  
 });
  
 
 
+
+
 //load layer with api
-function loaddata(id_kec,id_desa,get_blok="",fiscal_parcels='',buildings='')
+function loaddata(id_kec,id_desa,get_blok="",fiscal_parcels='',buildings='',legal_parcels='')
 { 
  
       var fiscal_url    =fiscal_parcels==1?'&fiscal_parcels='+fiscal_parcels:'';
       var buildings_url =buildings==1?'&buildings='+buildings:'';
       var id_blok       =get_blok!=""?'&id_blok='+get_blok:'';
-      var url_          ='?id_kec='+id_kec+'&id_kel='+id_desa+id_blok+fiscal_url+buildings_url;
-      window.id_desa    =id_desa;
-
+      var legal_url     =legal_parcels!=""?'&legal_parcels='+legal_parcels:'';
+      var url_          ='?id_kec='+id_kec+'&id_kel='+id_desa+id_blok+fiscal_url+buildings_url+legal_url;
+      window.id_desa    =id_desa; 
       window.history.pushState({'historycontent':url_}, null,url_); 
       $('input[name="informasi"]').attr('disabled','disabled'); 
-      $('input[name="ubah"]').attr('disabled','disabled'); 
-      $('#pplayer').css('display','none');
-      var fiscal=0;
-      var building=0;
-
+      $('input[name="ubah"]').attr('disabled','disabled');  
+      var fiscal  =0;
+      var building=0; 
       for(let cek in window)
       {
             if(cek.indexOf('fiscal_parcels_')!=-1||cek.indexOf('buildings_')!=-1)
-            { 
-                 console.log(cek);
-               if(cek.indexOf('_fiscal_parcels_')==-1||cek.indexOf('_buildings_')==-1)
-               {
-                 map.removeLayer(window[cek]);
-                  window[cek]=undefined;
-               }
-               
+            {  
+                  map.removeLayer(window[cek]);
+                  window[cek]=undefined; 
 
-            } 
-             if(cek.indexOf('_fiscal_parcels_')!=-1)
-             {
-
-              fiscal++;
-             }
-              if(cek.indexOf('_buildings_')!=-1)
-             {
-              building++;
-             }
-            
+            }    
+      } 
+      if(window['fiscal_parcelspp'])
+      {
+         informasi_layer('fiscal_parcelspp',window['fiscal_parcelspp'],false);     
       }
 
-       if(fiscal>0)
-       {
-          $('#pplayer2').find('.pp_fiscal_parcels').remove();
+      if(window['buildingspp'])
+      {
+         informasi_layer('buildingspp',window['buildingspp'],false);     
+      }
+       
 
-       }
-       if(building>0)
-       {
-          $('#pplayer2').find('.pp_buildings').remove();
+      loaddatalegalparsel(legal_parcels);
 
-       }
       const formnop   = new FormData(); 
       formnop.append('_token',_token);
       formnop.append('id_desa',id_desa+get_blok);
@@ -271,14 +270,14 @@ function loaddata(id_kec,id_desa,get_blok="",fiscal_parcels='',buildings='')
                $('input[name="informasi"]').removeAttr('disabled');
                 $('input[name="ubah"]').removeAttr('disabled'); 
                 loadarraywkt('buildings_',data.data_geo.buildings);
-                informasi_layer('pp_buildings',data.data_geo.buildings);
+                informasi_layer('buildingspp',data.data_geo.buildings);
             }
             if(data.data_geo.fiscal_parcels)
             {
                $('input[name="informasi"]').removeAttr('disabled');
                $('input[name="ubah"]').removeAttr('disabled');
                loadarraywkt('fiscal_parcels_',data.data_geo.fiscal_parcels);
-               informasi_layer('pp_fiscal_parcels',data.data_geo.fiscal_parcels);
+               informasi_layer('fiscal_parcelspp',data.data_geo.fiscal_parcels);
  
             } 
         }
@@ -294,54 +293,111 @@ function loaddata(id_kec,id_desa,get_blok="",fiscal_parcels='',buildings='')
 //load layer with api
 // fungsi legal parsel
 function loaddatalegalparsel(this_)
-{
-   //console.log(this_);
-   $('#pplayer').css('display','none');
- 
-   if(this_)
-   {
+{ 
+   if(this_==1)
+   { 
+        var cek_l=0;
+        for(let cek in window)
+        {
+              if(cek.indexOf('legal_parcels_')!=-1)
+              {   
+               console.log(cek);
+                window[cek].setVisible(true);
+                cek_l++;
+              } 
+           
+        }   
+
+        if(window['legal_parcelspp']!=undefined)
+        {
+            informasi_layer('legal_parcelspp',window['legal_parcelspp']); 
+        }
+        if(cek_l<=0)
+        {
+             // console.log(cek_l);
+              const formlegal   = new FormData(); 
+              formlegal.append('_token',_token);
+              fetch(getlegalparsel, { method: 'POST',body:formlegal}).then(res => res.json()).then(data => 
+              { 
+                       loadarraywkt('legal_parcels_',data.data_legal);
+                       informasi_layer('legal_parcelspp',data.data_legal); 
+              }); 
+              
+        }
       
-      var cek_l=0;
-      for(let cek in window)
-      {
-            if(cek.indexOf('legal_parcels_')!=-1&&cek.indexOf('_legal_parcels')==-1)
-            {   
-              window[cek].setVisible(true);
-              cek_l++;
-            } 
-         
-      }  
-       
-      if(window['pp_legal_parcels'])
-      {
-          informasi_layer('pp_legal_parcels',window['pp_legal_parcels']); 
-      }
-      if(cek_l<=0)
-      {
-           // console.log(cek_l);
-            const formlegal   = new FormData(); 
-            formlegal.append('_token',_token);
-            fetch(getlegalparsel, { method: 'POST',body:formlegal}).then(res => res.json()).then(data => 
-            { 
-                     loadarraywkt('legal_parcels_',data.data_legal);
-                     informasi_layer('pp_legal_parcels',data.data_legal); 
-            }); 
-      }
-      
-   }else
-   {
-      $('#pplayer2').find('.pp_legal_parcels').remove();
-      for(let cek in window)
-      {
-          if(cek.indexOf('legal_parcels_')!=-1)
-            {   
-              window[cek].setVisible(false); 
-            }  
-      }
    }
+   else
+   {
+        
+        for(let cek in window)
+        {
+            if(cek.indexOf('legal_parcels_')!=-1)
+              {   
+                    window[cek].setVisible(false); 
+              }  
+        }
+        if(window['legal_parcelspp'])
+        {
+            informasi_layer('legal_parcelspp',window['legal_parcelspp'],false); 
+        }
+
+
+    }
 
 }
 // fungsi legal parsel
+
+
+ // Land_use
+$('body').delegate('input[name="Land_use"]','change',function(e)
+{
+e.preventDefault();  
+if($(this).is(':checked'))
+{
+      var cek_l=0;
+      for(let cek in window)
+      {
+           if(cek.indexOf('land_uses_')!=-1)
+           {   
+             window[cek].setVisible(true);
+             cek_l++;
+           } 
+        
+      }  
+
+      if(window['land_usespp'])
+      {
+         informasi_layer('land_usespp',window['land_usespp']); 
+      }
+      if(cek_l<=0)
+      { 
+         const formuse   = new FormData(); 
+         formuse.append('_token',_token);
+         fetch(getland_use, { method: 'POST',body:formuse}).then(res => res.json()).then(data => 
+         { 
+                  loadarraywkt('land_uses_',data.land_uses);
+                  informasi_layer('land_usespp',data.land_uses); 
+         }); 
+      } 
+
+} 
+else
+{ 
+      for(let cek in window)
+      {
+         if(cek.indexOf('land_uses_')!=-1)
+           {   
+                 window[cek].setVisible(false); 
+           }  
+      }
+      if(window['land_usespp'])
+      {
+         informasi_layer('land_usespp',window['land_usespp'],false); 
+      }
+}
+
+});
+
 
 
 
@@ -363,7 +419,7 @@ function loadarraywkt(name_wind,data_)
            }
            else
            {
-               vktor_  =vektor_wkt(wkt,name_wind+li_.id);  
+               vktor_  =vektor_wkt(wkt,name_wind+li_.id,style_default('',name_wind));  
            }
            vktor_.setZIndex(l);
            map.addLayer(vktor_);  
@@ -376,16 +432,19 @@ function loadarraywkt(name_wind,data_)
    if(window[fokus_layer]!=undefined)
    {
 
-      window.layer      =l;  
-      var coord_center  =[]; 
-      var get_lyr_coor  =window[fokus_layer].getSource().getFeatures();
-      get_lyr_coor.forEach(function(feat)
-      {
-         coord_center  =feat.getGeometry().getExtent();
-      });
-      var X = coord_center[0] + (coord_center[2]-coord_center[0])/2;
-      var Y = coord_center[1] + (coord_center[3]-coord_center[1])/2;
-      view.animate({zoom: 4},{center: [X,Y]});
+        var viewResolution = map.getView().getResolution();
+        console.log(viewResolution);
+        window.layer      =l;  
+        var coord_center  =[]; 
+        var get_lyr_coor  =window[fokus_layer].getSource().getFeatures();
+        get_lyr_coor.forEach(function(feat)
+        {
+           coord_center  =feat.getGeometry().getExtent();
+        });
+        var X = coord_center[0] + (coord_center[2]-coord_center[0])/2;
+        var Y = coord_center[1] + (coord_center[3]-coord_center[1])/2;
+
+        view.animate({zoom: nilai_zoom},{center: [X,Y]});
    }
 
 }
@@ -394,6 +453,7 @@ function loadarraywkt(name_wind,data_)
 //style default
 function style_default(text_="",layer="")
 {  
+ 
 var color='rgba(13, 187, 227, 0.4)';
 if(layer.indexOf('fiscal_parcels')!=-1)
 {
@@ -402,6 +462,10 @@ if(layer.indexOf('fiscal_parcels')!=-1)
 if(layer.indexOf('buildings')!=-1)
 {
  color='rgba(219, 26, 26, 0.4)';
+}
+if(layer.indexOf('land_use')!=-1)
+{
+ color='rgba(20, 69, 217, 0.63)';
 }
 
 return new ol.style.Style
@@ -471,8 +535,7 @@ function informasi_layer(name_,data_,show=true)
 { 
    var list_      ='';
    var name_th    =``; 
-   window[name_]  =data_;
-//console.log(name_);
+   window[name_]  =data_; 
    var ojk_neme   =Object.keys(data_[0]); 
    for(let nameky of ojk_neme)
    {
@@ -490,9 +553,9 @@ function informasi_layer(name_,data_,show=true)
       for(let vk_ of ojk_neme)
       {
             if(vk_!='geojson')
-               {  
-                     list_+= `<th  class="klikfokus" data-idlayer="`+v_.id+`">`+v_[vk_]+`</th>`;
-               }
+            {  
+                  list_+= `<th  class="klikfokus" data-idlayer="`+v_.id+`">`+v_[vk_]+`</th>`;
+            }
        }
    list_+=      `</tr>`;
    }
@@ -502,18 +565,23 @@ function informasi_layer(name_,data_,show=true)
 
       if(show)
       {
-         if(!$('#pplayer2').find('.table').hasClass(name_))
-         { 
-            $('#pplayer2').append(tb_);
-         }
+           if(!$('#pplayer2').find('.table').hasClass(name_))
+           { 
+              $('#pplayer2').append(tb_);
+           }
       }
       else
       {
          $('#pplayer2').find('.'+name_).remove();
       } 
-      if($('#pplayer2').find('.table').length!=0)
+
+      if($('#pplayer2').find('.table').length>0)
       {
             $('#pplayer').css('display','flex'); 
+      }
+      else
+      {
+         $('#pplayer').css('display','none'); 
       }
 
 }
@@ -523,15 +591,14 @@ function informasi_layer(name_,data_,show=true)
 $('body').delegate('.klikfokus','click',function(e)
 {
    e.preventDefault(); 
-   var idlayer =$(this).closest('tr').find('input[name="layer_[]"]').val();  
-    var get_lyr_coor  =window[idlayer.replace('pp_','')].getSource().getFeatures(); 
-        get_lyr_coor.forEach(function(feat) 
-        {
-        coord_center  =feat.getGeometry().getExtent();
+   var   idlayer =$(this).closest('tr').find('input[name="layer_[]"]').val();   
+   var   get_lyr_coor  =window[idlayer.replace('pp_','_')].getSource().getFeatures(); 
+         get_lyr_coor.forEach(function(feat) 
+         {
+               coord_center  =feat.getGeometry().getExtent();
          });
         if(coord_center)
-        {
-
+        { 
            var X = coord_center[0] + (coord_center[2]-coord_center[0])/2;
            var Y = coord_center[1] + (coord_center[3]-coord_center[1])/2;
            view.animate({zoom: 4},{center: [X,Y]}); 
@@ -544,7 +611,7 @@ $('body').delegate('input[name="layer_[]"]','change',function(e)
   e.preventDefault(); 
 
   var idlayer =$(this).val();
-  idlayer=idlayer.replace('pp_','');
+  idlayer=idlayer.replace('pp_','_');
   if($(this).is(':checked'))
   { 
       window[idlayer].setVisible(true);
@@ -611,14 +678,19 @@ map.on('click', function(evt)
    }
       for(let cek in window)
       {
-            if(cek.indexOf('fiscal_parcels_')!=-1 && cek.indexOf('pp_fiscal_parcels_')<=-1)
+            if(cek.indexOf('fiscal_parcels_')!=-1)
             {  
                 window[cek].setStyle(style_default('',cek)); 
             } 
-            if(cek.indexOf('buildings_')!=-1 && cek.indexOf('pp_buildings_')<=-1)
+            if(cek.indexOf('buildings_')!=-1)
             { 
                 window[cek].setStyle(style_default('',cek)); 
             } 
+            if(cek.indexOf('legal_parcels_')!=-1)
+            { 
+                window[cek].setStyle(style_default('',cek)); 
+            } 
+
       } 
 
   overlay.setPosition(undefined);
@@ -628,25 +700,25 @@ map.on('click', function(evt)
 
   var feature = map.forEachFeatureAtPixel(evt.pixel,function(feature) {
     return feature;
-    });
+  });
   $('.infolayer').empty();
   $('.ubahlayer').empty();
   if(feature)
   { 
-     window[feature.get('id')].setStyle(highlightStyle); 
-     window.edit=feature.get('id');
-   // console.log(feature.get('id'));
-      if($('input[name="informasi"]').is(':checked')==true)
-      {
-        overlay.setPosition(evt.coordinate); 
-        isipopup('info',feature.get('id'));
-      }
-      if($('input[name="ubah"]').is(':checked')&&(window.edit.indexOf('fiscal_parcels')!=-1||window.edit.indexOf('buildings')!=-1))
-      {
-        overlay.setPosition(evt.coordinate);
-        isipopup2('ubah',feature.get('id'));
-      
-      } 
+       window[feature.get('id')].setStyle(highlightStyle); 
+       window.edit=feature.get('id');
+        if($('input[name="informasi"]').is(':checked')==true)
+        {
+          overlay.setPosition(evt.coordinate); 
+          isipopup('info',feature.get('id'));
+        }
+        
+        if($('input[name="ubah"]').is(':checked'))
+        {
+          overlay.setPosition(evt.coordinate);
+          isipopup2('ubah',feature.get('id'));
+        
+        } 
 
   } 
 });
@@ -656,9 +728,8 @@ function isipopup(aksi,id_)
 { 
   $('input[name="informasi"]').attr('disabled','disabled');
 
-  var id_neme='pp_'+id_; 
+  var id_neme=id_.replace('s_','spp_'); 
   var list_pp='';  
-
    $.each(window[id_neme],function(t,v)
    {
         if(t!='geojson')
@@ -673,7 +744,7 @@ function isipopup(aksi,id_)
 function isipopup2(aksi,id_)
 { 
   $('input[name="ubah"]').attr('disabled','disabled');
-  var id_neme='pp_'+id_;  
+   var id_neme=id_.replace('s_','spp_'); 
   var list_ubah='';  
       list_ubah =`<ul  data-id="`+id_neme+`">
                   <li class="potongbentuk">Potong</li>
@@ -748,7 +819,7 @@ $('body').delegate('.ubahbentuk','click',function(e)
 {
     e.preventDefault();
    overlay.setPosition(undefined);
-   $('.btnsimpan').html('<button class="btn btn-success btn-sm btn-blok" id="simpanLayer">simpan</button>');
+   $('.btnsimpan').html('<button class="btn btn-success btn-sm btn-blok" id="simpanLayer">simpan</button><button class="btn btn-danger btn-sm btn-blok" id="Batallayrer">Batal</button>');
       window.ubah_layer=window.edit;
       window.ExampleModify = new ol.interaction.Modify({
       source: window[window.edit].getSource()
@@ -794,7 +865,7 @@ $('body').delegate('.UbahData','click',function(e)
       $('#simpandataattrmodal').empty();
       $('#modalpagedata').modal('show');  
       window.ubah_data  =window.edit;
-      var lidt          =window['pp_'+window.ubah_data];
+      var lidt          =window[window.ubah_data.replace('s_','spp_')];
       var ojk_neme      =Object.keys(lidt); 
       var label_        ='';
       for(let lbl_ of ojk_neme)
@@ -897,7 +968,7 @@ $('body').delegate('input[name="buatlayer"]','change',function(e)
 
       for(let cek in window)
       {
-            if(cek.indexOf('fiscal_parcels_')!=-1&&cek.indexOf('pp_fiscal_parcels_')==-1||cek.indexOf('buildings_')!=-1&&cek.indexOf('pp_buildings_')==-1)
+            if(cek.indexOf('fiscal_parcels_')!=-1||cek.indexOf('buildings_')!=-1)
             { 
                var name_snap = new ol.interaction.Snap({
                   source:window[cek].getSource()
@@ -925,7 +996,7 @@ $('body').delegate('input[name="buatlayer"]','change',function(e)
       map.removeInteraction(window.persil_);
       for(let cek in window)
       {
-            if(cek.indexOf('fiscal_parcels_')!=-1&&cek.indexOf('pp_fiscal_parcels_')==-1||cek.indexOf('buildings_')!=-1&&cek.indexOf('pp_buildings_')==-1)
+            if(cek.indexOf('fiscal_parcels_')!=-1||cek.indexOf('buildings_')!=-1||cek.indexOf('legal_parcels_')!=-1)
             { 
                var name_snap = new ol.interaction.Snap({
                   source:window[cek].getSource()
@@ -1023,6 +1094,10 @@ $('body').delegate('#simpanunggah','submit',function(e)
         }
   xmlhttp.send(oData);
 });
-
+$('body').delegate('#Batallayrer','click',function(e)
+{ 
+   e.preventDefault();
+    window.location.reload(); 
+});
 
 
