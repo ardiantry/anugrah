@@ -33,9 +33,11 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav mr-auto">
- <li class="nav-item">
-                                <a class="nav-link" href="{{ route('datatable') }}">Tampilan Table</a>
-                            </li>
+                         @if(@Auth::user()->id) 
+                    <li class="nav-item">
+                    <a class="nav-link" href="{{ route('datatable') }}">Tampilan Table</a>
+                    </li>
+                         @endif
                     </ul>
 
                     <!-- Right Side Of Navbar -->

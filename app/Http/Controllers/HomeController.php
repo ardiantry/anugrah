@@ -465,6 +465,7 @@ class HomeController extends Controller
     }
  public function datatable(Request $request)
     {
+          return view('data_table');
     }
 
 

@@ -3,95 +3,95 @@
 @section('content')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.14.1/css/ol.css" type="text/css">
 <link rel="stylesheet" href="{{asset('css/stylemaps.css')}}" type="text/css"> 
-    <!-- side bar -->
- <div  class="side_bar"> 
-            <form id="nop" name="nop">
-                <div class="form-group row">
-                  <div class="col-lg-12 col-md-12 col-sm-6 col-xs-6">
-                      <label>Pilih Kecamatan</label>
-                      <select name="id_kec" class="form-control"> 
-                      </select> 
+<!-- side bar -->
+<div  class="side_bar"> 
+      <form id="nop" name="nop">
+          <div class="form-group row">
+            <div class="col-lg-12 col-md-12 col-sm-6 col-xs-6">
+                <label>Pilih Kecamatan</label>
+                <select name="id_kec" class="form-control"> 
+                </select> 
+            </div>
+            <div class="col-lg-12 col-md-12 col-sm-6 col-xs-6">
+                <label>Pilih Desa</label>
+                <select name="id_desa" class="form-control" readonly="readonly"> 
+                </select> 
+            </div>
+             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <label>Blok</label>
+                <select name="id_blok" class="form-control" readonly="readonly"> 
+                </select> 
+            </div>
+          </div> 
+          <div class="form-group clr_l">
+              <input type="checkbox" name="fiscal_parcels" value="1"> 
+              <div class="form-control">
+                  <label>Fiscal_parcels</label> 
+                  <div class="color_ Fiscal_parcels_clr"></div> 
+              </div>
+          </div>  
+          <div class="form-group clr_l">
+               <input type="checkbox" name="buildings" value="1">
+                  <div class="form-control">
+                      <label>Buildings</label> 
+                      <div class="color_ buildings_clr"></div> 
                   </div>
-                  <div class="col-lg-12 col-md-12 col-sm-6 col-xs-6">
-                      <label>Pilih Desa</label>
-                      <select name="id_desa" class="form-control" readonly="readonly"> 
-                      </select> 
-                  </div>
-                   <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                      <label>Blok</label>
-                      <select name="id_blok" class="form-control" readonly="readonly"> 
-                      </select> 
-                  </div>
-                </div> 
+          </div>    
+          <div class="form-group clr_l">
+                    <input type="checkbox" name="Legal_parcels" value="1">
+                     <div class="form-control">
+                    <label>Legal_parcels</label> 
+                    <div class="color_ Legal_parcels_clr"></div> 
+                </div>
+            </div>  
+            <div class="form-group text-center">
+                <button class="btn btn-success btn-sm" type="submit" ><i class="fa fa-search"></i> Tampilkan</button>
+                @if(@Auth::user()->id)
+                  <a href="#" class="btn btn-primary btn-sm" id="modalunggah"><i class="fa fa-cloud-upload"></i> unggah</a>
+                @endif
+            
+            </div>
+      </form>
+      <div class="border">
+        
                 <div class="form-group clr_l">
-                    <input type="checkbox" name="fiscal_parcels" value="1"> 
-                    <div class="form-control">
-                        <label>Fiscal_parcels</label> 
-                        <div class="color_ Fiscal_parcels_clr"></div> 
-                    </div>
+                      <input type="checkbox" name="Land_use" value="1">
+                       <div class="form-control">
+                            <label>Land_use</label> 
+                          <div class="Land_use_clr"></div> 
+                      </div>
+                </div> 
+                 <div class="form-group clr_l">
+                        <input type="checkbox" name="JaringanJalan" value="1">
+                       <div class="form-control">
+                          <label>JaringanJalan</label> 
+                          <div class="Land_jln_clr"></div> 
+                      </div>
+                </div> 
+                 <div class="form-group clr_l">
+                       <input type="checkbox" name="JaringanPDAM" value="1">
+                       <div class="form-control">
+                          <label>Jaringan PDAM</label> 
+                          <div class="pdam_clr"></div> 
+                      </div>
                 </div>  
                 <div class="form-group clr_l">
-                     <input type="checkbox" name="buildings" value="1">
-                        <div class="form-control">
-                            <label>Buildings</label> 
-                            <div class="color_ buildings_clr"></div> 
-                        </div>
-                </div>    
-                <div class="form-group clr_l">
-                          <input type="checkbox" name="Legal_parcels" value="1">
-                           <div class="form-control">
-                          <label>Legal_parcels</label> 
-                          <div class="color_ Legal_parcels_clr"></div> 
+                            <input type="checkbox" name="JaringanListrik" value="1">
+                       <div class="form-control">
+                          <label>JaringanListrik</label> 
+                          <div class="pln_clr"></div> 
                       </div>
-                  </div>  
-                  <div class="form-group text-center">
-                      <button class="btn btn-success btn-sm" type="submit" ><i class="fa fa-search"></i> Tampilkan</button>
-                      @if(@Auth::user()->id)
-                        <a href="#" class="btn btn-primary btn-sm" id="modalunggah"><i class="fa fa-cloud-upload"></i> unggah</a>
-                      @endif
-                  
-                  </div>
-            </form>
-            <div class="border">
-              
-                      <div class="form-group clr_l">
-                            <input type="checkbox" name="Land_use" value="1">
-                             <div class="form-control">
-                                  <label>Land_use</label> 
-                                <div class="Land_use_clr"></div> 
-                            </div>
-                      </div> 
-                       <div class="form-group clr_l">
-                              <input type="checkbox" name="JaringanJalan" value="1">
-                             <div class="form-control">
-                                <label>JaringanJalan</label> 
-                                <div class="Land_jln_clr"></div> 
-                            </div>
-                      </div> 
-                       <div class="form-group clr_l">
-                             <input type="checkbox" name="JaringanPDAM" value="1">
-                             <div class="form-control">
-                                <label>Jaringan PDAM</label> 
-                                <div class="pdam_clr"></div> 
-                            </div>
-                      </div>  
-                      <div class="form-group clr_l">
-                                  <input type="checkbox" name="JaringanListrik" value="1">
-                             <div class="form-control">
-                                <label>JaringanListrik</label> 
-                                <div class="pln_clr"></div> 
-                            </div>
-                      </div> 
-                      <div class="form-group clr_l">
-                                  <input type="checkbox" name="DataWajibPajak" value="1">
-                             <div class="form-control">
-                              <label>DataWajibPajak</label> 
-                              <div class="Land_use_clr"></div> 
-                            </div>
-                      </div>  
-            </div> 
-            
-       </div>
+                </div> 
+                <div class="form-group clr_l">
+                            <input type="checkbox" name="DataWajibPajak" value="1">
+                       <div class="form-control">
+                        <label>DataWajibPajak</label> 
+                        <div class="Land_use_clr"></div> 
+                      </div>
+                </div>  
+      </div> 
+      
+ </div>
 
 
 

@@ -241,6 +241,9 @@
   left: unset;
   top: 223px;
 }
+.table.infolayer {
+  border: 1px solid #ccc;
+}
 @media(max-width: 500px)
 {
   #pplayer
