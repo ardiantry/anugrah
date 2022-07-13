@@ -14,7 +14,7 @@ const overlay           = new ol.Overlay({
               }
               });
 
-closer.onclick            =function() {
+closer.onclick            =function() { 
               overlay.setPosition(undefined);
               closer.blur();
               return false;
@@ -39,21 +39,17 @@ var view=new ol.View({
 
 //maps
 //base osm
-window.osm=new ol.layer.Tile({
-            source: new ol.source.OSM()
-          });
-map.addLayer(window.osm);
-//base osm
-//set height
+
+
 var windowHeight  = $(window).height();
                     $('#map').css({
                     height : (parseInt(windowHeight)-50)+"px"    
                     });
 map.updateSize();  
 
-$('.side_bar').css('max-height',windowHeight-20+'px');
+$('.side_bar').css('max-height',windowHeight+'px');
 var widt_side=$('.side_bar').width();
-$('#pplayer').css('left',widt_side+'px');
+$('#pplayer').css('left',(widt_side-10)+'px');
 //set height
 
 //base google
@@ -72,8 +68,11 @@ var google_base       =new ol.layer.Tile({
               });
     gmaps.push(google_base); 
 }; 
-//base google
 
+window.satelite=gmaps[0];
+map.addLayer(window.satelite);
+//base google
+ 
 
 //get api region
 fetch(`http://www.emsifa.com/api-wilayah-indonesia/api/districts/3372.json`)
@@ -301,7 +300,7 @@ function loaddatalegalparsel(this_)
         {
               if(cek.indexOf('legal_parcels_')!=-1)
               {   
-               console.log(cek);
+              // console.log(cek);
                 window[cek].setVisible(true);
                 cek_l++;
               } 
@@ -361,19 +360,12 @@ $('body').delegate('input[name="JaringanJalan"]','change',function(e)
    var this_Jalan=$(this);
    JaringanJalan(this_Jalan);
 });
-$('body').delegate('input[name="JaringanPDAM"]','change',function(e)
-{
-   e.preventDefault();  
-   var this_pdam=$(this);
-   JaringanJalan(this_pdam);
-});
+
 
 var this_land=$('input[name="Land_use"]');
 landuses(this_land);
 var this_Jalan=$('input[name="JaringanJalan"]');
 JaringanJalan(this_Jalan);
-var this_pdam=$('input[name="JaringanPDAM"]');
-Jaringan_PDAM(this_pdam)
 
 
 
@@ -434,7 +426,7 @@ function JaringanJalan(this_)
          {
               if(cek.indexOf('jaringan_jalans_')!=-1)
               {   
-               console.log(cek);
+            //   console.log(cek);
                 window[cek].setVisible(true);
                 cek_l++;
               } 
@@ -472,15 +464,23 @@ function JaringanJalan(this_)
       }
 
 }
+$('body').delegate('input[name="JaringanListrik"]','change',function(e)
+{
+   e.preventDefault();  
+   var this_pln=$(this);
+   jaringan_pln(this_pln);
+});
 
-function Jaringan_PDAM(this_)
+var this_pln=$('input[name="JaringanListrik"]');
+jaringan_pln(this_pln); 
+function jaringan_pln(this_)
 {
       if(this_.is(':checked'))
       {
          var cek_l=0;
          for(let cek in window)
          {
-              if(cek.indexOf('Jaringan_pdms_')!=-1)
+              if(cek.indexOf('jaringan_plns_')!=-1)
               {   
            
                 window[cek].setVisible(true);
@@ -488,18 +488,18 @@ function Jaringan_PDAM(this_)
               } 
            
          }  
-         if(window['Jaringan_pdmspp'])
+         if(window['jaringan_plnspp'])
          {
-            informasi_layer('Jaringan_pdmspp',window['Jaringan_pdmspp']); 
+            informasi_layer('jaringan_plnspp',window['jaringan_plnspp']); 
          }
          if(cek_l<=0)
          { 
-            const formalans   = new FormData(); 
-            formalans.append('_token',_token);
-            fetch(getjaringanpln, { method: 'POST',body:formalans}).then(res => res.json()).then(data => 
+            const formapln   = new FormData(); 
+            formapln.append('_token',_token);
+            fetch(getjaringanpln, { method: 'POST',body:formapln}).then(res => res.json()).then(data => 
             { 
-                  loadarraywkt('Jaringan_pdms_',data.jaringanpln);
-                  informasi_layer('Jaringan_pdmspp',data.jaringanpln); 
+                  loadarraywkt('jaringan_plns_',data.jaringanpln);
+                  informasi_layer('jaringan_plnspp',data.jaringanpln); 
             }); 
          } 
       } 
@@ -507,19 +507,79 @@ function Jaringan_PDAM(this_)
       { 
             for(let cek in window)
             {
-               if(cek.indexOf('Jaringan_pdms_')!=-1)
+               if(cek.indexOf('jaringan_plns_')!=-1)
                  {   
                        window[cek].setVisible(false); 
+                    //   console.log(cek);
                  }  
             }
 
-            if(window['Jaringan_pdmspp'])
+            if(window['jaringan_plnspp'])
             {
-               informasi_layer('Jaringan_pdmspp',window['Jaringan_pdmspp'],false); 
+               informasi_layer('jaringan_plnspp',window['jaringan_plnspp'],false); 
             }
       }
 
 }
+$('body').delegate('input[name="JaringanPDAM"]','change',function(e)
+{
+   e.preventDefault();  
+   var this_pdam=$(this);
+   jaringan_pdam(this_pdam);
+});
+
+var this_pdam=$('input[name="JaringanPDAM"]');
+jaringan_pdam(this_pdam); 
+function jaringan_pdam(this_)
+{
+      if(this_.is(':checked'))
+      {
+         var cek_l=0;
+         for(let cek in window)
+         {
+              if(cek.indexOf('jaringan_pdams_')!=-1)
+              {   
+           
+                window[cek].setVisible(true);
+                cek_l++;
+              } 
+           
+         }  
+         if(window['jaringan_pdamspp'])
+         {
+            informasi_layer('jaringan_pdamspp',window['jaringan_pdamspp']); 
+         }
+         if(cek_l<=0)
+         { 
+            const formapdam   = new FormData(); 
+            formapdam.append('_token',_token);
+            fetch(getjaringanpdam, { method: 'POST',body:formapdam}).then(res => res.json()).then(data => 
+            { 
+                  loadarraywkt('jaringan_pdams_',data.jaringanpdam);
+                  informasi_layer('jaringan_pdamspp',data.jaringanpdam); 
+            }); 
+         } 
+      } 
+      else
+      { 
+            for(let cek in window)
+            {
+               if(cek.indexOf('jaringan_pdams_')!=-1)
+                 {   
+                       window[cek].setVisible(false); 
+                    //   console.log(cek);
+                 }  
+            }
+
+            if(window['jaringan_pdamspp'])
+            {
+               informasi_layer('jaringan_pdamspp',window['jaringan_pdamspp'],false); 
+            }
+      }
+
+}
+//JaringanPDAM
+
 // convert wkt to layer 
 function loadarraywkt(name_wind,data_)
 {
@@ -552,7 +612,7 @@ function loadarraywkt(name_wind,data_)
    {
 
         var viewResolution = map.getView().getResolution();
-        console.log(viewResolution);
+       // console.log(viewResolution);
         window.layer      =l;  
         var coord_center  =[]; 
         var get_lyr_coor  =window[fokus_layer].getSource().getFeatures();
@@ -572,10 +632,10 @@ function loadarraywkt(name_wind,data_)
 //style default
 function style_default(text_="",layer="")
 {  
- 
+//console.log(layer);
 var color='rgba(13, 187, 227, 0.4)';
 var fill='#000';
-
+var widt_fill=1;
 if(layer.indexOf('fiscal_parcels')!=-1)
 {
  color='rgba(234, 221, 25, 0.4)';
@@ -591,13 +651,24 @@ if(layer.indexOf('land_uses')!=-1)
 if(layer.indexOf('jaringan_jalans')!=-1)
 {
  fill='#2d995b';
+  widt_fill=2;
+}
+if(layer.indexOf('jaringan_plns')!=-1)
+{
+ fill='#ecd30a';
+ widt_fill=2;
+}
+if(layer.indexOf('jaringan_pdams')!=-1)
+{
+ fill='#d22121';
+ widt_fill=2;
 }
 return new ol.style.Style
     ({
             stroke  : new ol.style.Stroke
             ({
                   color: fill,
-                  width: 1
+                  width: widt_fill
             }),
             fill     : new ol.style.Fill({
             color    : color
@@ -747,6 +818,9 @@ $('body').delegate('input[name="layer_[]"]','change',function(e)
 });
 //hide show layer
 // change base map
+var Osm_=new ol.layer.Tile({
+            source: new ol.source.OSM()
+            }); 
 $('body').delegate('input[name="base"]','change',function(e)
 {
     e.preventDefault();
@@ -776,7 +850,17 @@ $('body').delegate('input[name="base"]','change',function(e)
         }
       break;
       case 'osm':
-      window.osm.setVisible(true);
+      console.log($(this).val());
+       if(!window.osm)
+        {
+             
+             map.addLayer(Osm_);
+              window.osm=Osm_;
+        }
+        else
+        {
+            window.osm.setVisible(true);
+        }
       break;
       case 'raster':
        if(!window.raster)
@@ -796,10 +880,10 @@ $('body').delegate('input[name="base"]','change',function(e)
 //onclik to layer
 map.on('click', function(evt)
 {
-   if(window.potong||window.ubah_layer||window.buatbaru)
-   {
-      return;
-   }
+     if(window.potong||window.ubah_layer||window.buatbaru)
+     {
+        return;
+     }
       for(let cek in window)
       {
             if(cek.indexOf('fiscal_parcels_')!=-1)
@@ -831,6 +915,8 @@ map.on('click', function(evt)
   { 
        window[feature.get('id')].setStyle(highlightStyle); 
        window.edit=feature.get('id');
+       console.log(feature.get('id'));
+
         if($('input[name="informasi"]').is(':checked')==true)
         {
           overlay.setPosition(evt.coordinate); 
@@ -839,8 +925,11 @@ map.on('click', function(evt)
         
         if($('input[name="ubah"]').is(':checked'))
         {
-          overlay.setPosition(evt.coordinate);
-          isipopup2('ubah',feature.get('id'));
+            if(window.edit.indexOf('fiscal_parcels')!=-1||window.edit.indexOf('buildings')!=-1||window.edit.indexOf('legal_parcels')!=-1)
+            { 
+              overlay.setPosition(evt.coordinate);
+              isipopup2('ubah',feature.get('id'));
+            }
         
         } 
 
@@ -1175,6 +1264,16 @@ $('body').delegate('#modalunggah','click',function(e)
    $('#modalformunggah').modal('show'); 
 });
 
+
+$('body').delegate('#downloadtemplate','click',function(e)
+{ 
+   e.preventDefault();
+   window.location.href=download_template+'?type_table='+$('select[name="jenis_tabel"]').val();
+   
+});
+
+
+
 $('body').delegate('#simpanunggah','submit',function(e)
 { 
    e.preventDefault();
@@ -1209,10 +1308,11 @@ $('body').delegate('#simpanunggah','submit',function(e)
         { 
            if (this.readyState==4 && this.status==200) 
           {  
-               $('.aler-msg').empty();
+            var error_alert=xmlhttp.response.error?'danger':'success';
+               $('.aler-msg').html('<div class="alert alert-'+error_alert+'">Jumlah data tersimpan :'+xmlhttp.response.status+'</div>');
             window.setTimeout(function() 
-            {  
-            // window.location.reload(); 
+            { 
+              //window.location.reload(); 
             }, 1000); 
           }
         }

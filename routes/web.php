@@ -22,14 +22,15 @@ Route::post('/get-legal-parsel', 'HomeController@getlegalparsel')->name('getlega
 Route::post('/get-land-use', 'HomeController@getland_use')->name('getland_use');
 Route::post('/get-jaringan-jalans', 'HomeController@getjaringanjalans')->name('getjaringanjalans');
 Route::post('/get-jaringan-pln', 'HomeController@getjaringanpln')->name('getjaringanpln');
-
-
-
-
+Route::post('/get-jaringan-pdam', 'HomeController@getjaringanpdam')->name('getjaringanpdam');
+Route::get('/download-template', 'HomeController@downloadtemplate')->name('downloadtemplate'); 
 
 
 Route::post('/get-blok-data', 'HomeController@getblokdata')->name('getblokdata');
 Route::post('/unggahdata', 'HomeController@unggahdata')->name('unggahdata');
+
+Route::get('/data-table', 'HomeController@datatable')->name('datatable');
+
 
 
 

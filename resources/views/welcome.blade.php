@@ -4,14 +4,12 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.14.1/css/ol.css" type="text/css">
 <link rel="stylesheet" href="{{asset('css/stylemaps.css')}}" type="text/css"> 
     <!-- side bar -->
-<div class="row"> 
-    <div class="col-md-3"> 
-        <div  class="side_bar"> 
+ <div  class="side_bar"> 
             <form id="nop" name="nop">
                 <div class="form-group row">
                   <div class="col-lg-12 col-md-12 col-sm-6 col-xs-6">
                       <label>Pilih Kecamatan</label>
-                      <select name="id_kec" class="form-control">
+                      <select name="id_kec" class="form-control"> 
                       </select> 
                   </div>
                   <div class="col-lg-12 col-md-12 col-sm-6 col-xs-6">
@@ -46,14 +44,13 @@
                           <div class="color_ Legal_parcels_clr"></div> 
                       </div>
                   </div>  
-                 <div class="input-group">
-                    <button class="btn btn-success btn-sm" type="submit" ><i class="fa fa-search"></i> Tampilkan</button>
-                    @if(@Auth::user()->id)
-                    <span class="input-group-append"> 
-                      <a href="#" class="btn btn-primary btn-sm" id="modalunggah">unggah data</a>
-                    </span>
-                    @endif
-                 </div>  
+                  <div class="form-group text-center">
+                      <button class="btn btn-success btn-sm" type="submit" ><i class="fa fa-search"></i> Tampilkan</button>
+                      @if(@Auth::user()->id)
+                        <a href="#" class="btn btn-primary btn-sm" id="modalunggah"><i class="fa fa-cloud-upload"></i> unggah</a>
+                      @endif
+                  
+                  </div>
             </form>
             <div class="border">
               
@@ -82,7 +79,7 @@
                                   <input type="checkbox" name="JaringanListrik" value="1">
                              <div class="form-control">
                                 <label>JaringanListrik</label> 
-                                <div class="Land_use_clr"></div> 
+                                <div class="pln_clr"></div> 
                             </div>
                       </div> 
                       <div class="form-group clr_l">
@@ -94,19 +91,19 @@
                       </div>  
             </div> 
             
-       </div>   
-    </div>  
-    <div class="col-md-9"> 
-        <div id="map" class="map">  
-          <ul class="basemap">
-            <li><input type="radio" name="base"  value="satelite"> Satelite</li>
-            <li><input type="radio" name="base" value="osm" checked="checked"> OSM</li>
-            <li><input type="radio" name="base" value="raster"> Raster</li> 
-          </ul>
-    </div> 
-</div>
+       </div>
 
-<div class="row" id="pplayer">
+
+
+<div id="map" class="map">  
+  <ul class="basemap">
+    <li><input type="radio" name="base"  value="satelite" checked="checked"> Satelite</li>
+    <li><input type="radio" name="base" value="osm" > OSM</li>
+    <li><input type="radio" name="base" value="raster"> Raster</li> 
+  </ul>
+</div> 
+ 
+<div id="pplayer">
       <div class="col-md-2 col-lg-2 col-sm-2 col-xs-2 navtools" >    
           <ul>
           <li><input type="checkbox" name="informasi" value="informasi" disabled="disabled"> Informasi</li>
@@ -185,14 +182,19 @@
                     </div> 
                     <div class="form-group"> 
                         <label>Tabel yg ingin di insert</label>
-                        <select class="form-control" name="jenis_tabel"> 
-                          <option value="fiscal_parcels">fiscal_parcels</option>
-                          <option value="buildings">buildings</option> 
-                          <option value="legal_parcels">Legal_parcels</option> 
+                            <select class="form-control" name="jenis_tabel"> 
+                            <option value="fiscal_parcels">fiscal_parcels</option>
+                            <option value="buildings">buildings</option> 
+                            <option value="legal_parcels">Legal_parcels</option> 
+                            <option value="land_uses">land_uses</option>
+                            <option value="jalans">jalans</option>
+                            <option value="jaringan_plns">jaringan_plns</option>
+                            <option value="jaringan_pdams">jaringan_pdams</option>  
                         </select>
                     </div>
                      <div class="form-group"> 
                       <button type="submit" class="btn btn-success btn-sm">simpan</button>
+                       <button type="button" class="btn btn-primary btn-sm" id="downloadtemplate">Download template</button>
                      </div>
                   </form>
                 </div>
@@ -218,6 +220,8 @@
          var getland_use          ='{{route('getland_use')}}'; 
          var getjaringanjalans    ='{{route('getjaringanjalans')}}'; 
          var getjaringanpln       ='{{route('getjaringanpln')}}';  
+         var getjaringanpdam      ='{{route('getjaringanpdam')}}';  
+         var download_template     ='{{route('downloadtemplate')}}'; 
 
 
 

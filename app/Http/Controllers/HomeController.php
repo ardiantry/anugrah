@@ -41,16 +41,6 @@ class HomeController extends Controller
             if ($request->input('fiscal_parcels')) {
                 $data_geo['fiscal_parcels'] = DB::select('SELECT d_nop,d_luas,id,luas,njop,alamatobj,blok,no, ST_AsText(geom) AS geojson  FROM fiscal_parcels where d_nop like \'' . $data_desa . '%\'');
             }
-            //  if($request->input('legal_parcels'))
-            // {
-            //     bn$legal_parcels=DB::select('SELECT d_onp,idBgn,id,luasBgn,njopBgnM2, ST_AsText(geom) AS geojson  FROM legal_parcels where d_onp like '.$data_desa.'%');
-
-            // }
-            //  if($request->input('jalan'))
-            // {
-            //     $jalan=DB::select('SELECT d_onp,idBgn,id,luasBgn,njopBgnM2, ST_AsText(geom) AS geojson  FROM jalan where d_onp like '.$data_desa.'%');
-
-            // }
 
         }
         print json_encode(array('data_geo' => $data_geo, 'error' => $alert));
@@ -336,13 +326,24 @@ class HomeController extends Controller
              print json_encode(array('jaringanpln' => $jaringanpln)); 
     }
 
+    public function getjaringanpdam(Request $request)
+    {
 
+           $jaringanpdam= DB::select('SELECT 
+                                        id,
+                                        handle,
+                                        keterangan, 
+                                        jenis, 
+                                        ST_AsText(geom) AS geojson  FROM jaringan_pdams');
+
+             print json_encode(array('jaringanpdam' => $jaringanpdam)); 
+    }
 
 
 
  public function getblokdata(Request $request)
     {
-             $get_dt = DB::select('SELECT d_nop FROM fiscal_parcels where d_nop like \'' . $request->input('is_vilage'). '%\'');
+             $get_dt = DB::select('SELECT d_nop  FROM fiscal_parcels where d_nop like \'' . $request->input('is_vilage'). '%\'');
              $i=0;
              $get_dta=array();
              foreach ($get_dt as $key ) 
@@ -356,6 +357,44 @@ class HomeController extends Controller
              sort($get_dta);
              print json_encode(array('get_dt' => $get_dta)); 
     }
+
+ public function downloadtemplate(Request $request)
+    {
+        $get_dt=array();
+        if($request->input('type_table'))
+        {
+
+            $get_dt = DB::select('SELECT '.$request->input('type_table').'.*, ST_AsText('.$request->input('type_table').'.geom) AS geom FROM '.$request->input('type_table').' Limit 1'); 
+        }
+        $type_table=$request->input('type_table');
+        $filename = 'template-'.$type_table.'.csv'; 
+        $data_1=array();
+        $jangan=array('created_at','id','updated_at');
+        foreach (@$get_dt[0] as $key => $value) 
+        {
+            if(!in_array($key, $jangan))
+            { 
+                array_push($data_1,$key);
+            }
+        }
+        $data_2=array();
+         foreach (@$get_dt[0] as $key => $value) 
+        {
+            if(!in_array($key, $jangan))
+            { 
+                $value=$value?$value:0;
+                array_push($data_2,$value);
+            }
+        }
+        $data_merge=array($data_1,$data_2);
+        $f = fopen($filename, 'w');
+        foreach ($data_merge as $row) {
+            fputcsv($f, $row);
+        } 
+        fclose($f);
+        return redirect($filename);
+    }
+
  public function unggahdata(Request $request)
     {
     ini_set('upload_max_filesize', '500M'); 
@@ -364,8 +403,8 @@ class HomeController extends Controller
     ini_set('max_input_time', 3000);
     ini_set('max_execution_time', 3000);
 
-
-
+    $error=true; 
+    $tatus=0;
     $file           = $request->file('csv'); 
     $file->move(public_path('csv'), $file->getClientOriginalName());
         if(file_exists(public_path('csv/'.$file->getClientOriginalName())))
@@ -386,11 +425,49 @@ class HomeController extends Controller
                 fclose($filefopen);
                  
             }
-  //  $file_telah_ada = array_merge(array(),glob(public_path('csv').'\{,.}*', GLOB_BRACE));
+            $o=0;
+            $label_=array();
+            foreach ($importData_arr[0] as $key)
+            {
+               array_push($label_,$key);
+            }
+            foreach ($importData_arr as $key => $val)
+            {
+
+                if($o>0)
+                {
+                    $data=array();
+                    $i=0;
+                    foreach ($val as $value) 
+                    {
+                    $data[$label_[$i]]=$value;
+                    $i++; 
+                    }
+                    $data['created_at']=Carbon::now();
+                    $data['updated_at']=Carbon::now();  
+                   $simpan= DB::table($request->input('jenis_tabel'))->insertGetId($data);
+                   if($simpan)
+                   {
+                        $tatus++;
+                   }
+
+                } 
+                $o++;
+            }
+            if($tatus!=0)
+            {
+                $error=false;
+            }
+            print json_encode(array('error' => $error,'status'=>$tatus));  
 
 
         
     }
+ public function datatable(Request $request)
+    {
+    }
+
+
 
 
 }
