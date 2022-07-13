@@ -225,7 +225,7 @@
 
 
 
-         var nilai_zoom           ='{{@env('nilai_zoom')?@env('nilai_zoom'):4}}'; 
+         var nilai_zoom           ='{{@env('NILAI_ZOOM')?@env('NILAI_ZOOM'):4}}'; 
 
          
 
