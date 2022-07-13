@@ -154,12 +154,14 @@
 }
 .side_bar {
   position: fixed;
-  margin-bottom: 84px;
   width: 250px;
   overflow-y: auto;
   padding-bottom: 96px;
   z-index: 100;
   background: rgb(255, 255, 255);
+  padding-top: 72px;
+  bottom: 0;
+  top: 0;
 }
 .Fiscal_parcels_clr{
   background: rgba(234, 221, 25, 0.77);
