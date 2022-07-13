@@ -43,7 +43,7 @@ var view=new ol.View({
 
 var windowHeight  = $(window).height();
                     $('#map').css({
-                    height : (parseInt(windowHeight)-50)+"px"    
+                    height : (parseInt(windowHeight))+"px"    
                     });
 map.updateSize();  
 
