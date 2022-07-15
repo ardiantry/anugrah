@@ -30,7 +30,7 @@ Route::post('/get-blok-data', 'HomeController@getblokdata')->name('getblokdata')
 Route::post('/unggahdata', 'HomeController@unggahdata')->name('unggahdata');
 
 Route::get('/data-table', 'HomeController@datatable')->name('datatable');
-
+Route::post('/get-data-tabel', 'HomeController@getdatatabel')->name('getdatatabel');
 
 
 

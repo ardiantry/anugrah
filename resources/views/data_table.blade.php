@@ -1,13 +1,46 @@
 @extends('layouts.app') 
 @section('content')
 <link rel="stylesheet" href="{{asset('css/stylemaps.css')}}" type="text/css"> 
-<!-- side bar -->
 <style type="text/css">
 	.side_bar { 
   background: rgb(207, 221, 247); 
+   overflow-y: unset;
+  left: -250px;
+ transition: all .3s ease;
+ padding-bottom: unset; 
+}
+.mt-20 {
+  margin-top: 80px;
+} 
+#sidehide {
+  position: absolute;
+  right: -26px;
+  z-index: 100;
+}
+#sidehide i {
+  transform: rotate(-90deg);
+  
+  transition: all .3s ease;
+}
+.side_bar.show
+{
+ 	left: 0px;
+}
+.side_bar.show #sidehide i
+{
+	transform: rotate(90deg);
+}
+.page_content
+{
+	transition: all .3s ease;
+}  
+html, body
+{
+	height: unset;
 }
 </style>
 <div  class="side_bar"> 
+	<button class="btn btn-success btn-sm" id="sidehide"><i class="fa fa-sort-down"></i></button>
       <form id="nop" name="nop">
           <div class="form-group row">
             <div class="col-lg-12 col-md-12 col-sm-6 col-xs-6">
@@ -20,11 +53,11 @@
                 <select name="id_desa" class="form-control" readonly="readonly"> 
                 </select> 
             </div>
-             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+           <!--   <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <label>Blok</label>
                 <select name="id_blok" class="form-control" readonly="readonly"> 
                 </select> 
-            </div>
+            </div> -->
           </div> 
           <div class="form-group clr_l">
               <input type="checkbox" name="fiscal_parcels" value="1"> 
@@ -45,12 +78,23 @@
                 </div>
             </div>  
             <div class="form-group text-center">
-                <button class="btn btn-success btn-sm" type="submit" ><i class="fa fa-search"></i> Tampilkan</button>
-                 
+                <button class="btn btn-success btn-sm" type="submit" ><i class="fa fa-search"></i> Tampilkan</button> 
             </div>
-      </form>
-       
+      </form> 
       
+ </div>
+ <div class="container">
+	 <div class="row justify-content-end mt-20">
+	 	<div class="page_content col-md-12">
+	 		<div class="card">
+	 			<div class="card-body">
+	 				<table class="table">
+	 					<thead id="dataTable"><tr><td class="text-center"><div class="alert alert-warning">Tidak ada data yg ditampilkan</div></td></tr></thead>
+	 				</table>
+	 			</div>
+	 		</div>
+	 	</div> 
+	 </div>
  </div>
 <script type="text/javascript">
 	$(document).ready(function()
@@ -118,38 +162,35 @@
 			{
 			   e.preventDefault(); 
 			   var id_desa=$(this).val();
-			   blok_sm(id_desa);
+			   //blok_sm(id_desa);
 			});
 
-			function blok_sm(is_vilage,id_blok='')
-			{
+			// function blok_sm(is_vilage,id_blok='')
+			// {
 
-			    $('select[name="id_blok"]').removeAttr('readonly');
+			//     $('select[name="id_blok"]').removeAttr('readonly');
 			    
-			      const formblok   = new FormData(); 
-			      formblok.append('_token',_token);
-			      formblok.append('is_vilage',is_vilage); 
-			      fetch(getblokdata, { method: 'POST',body:formblok}).then(res => res.json()).then(data => 
-			      { 
-			        var list_kec=`<option value="">--pilih blok--</option>`;
-			        for(let li of data.get_dt)
-			        {
+			//       const formblok   = new FormData(); 
+			//       formblok.append('_token',_token);
+			//       formblok.append('is_vilage',is_vilage); 
+			//       fetch(getblokdata, { method: 'POST',body:formblok}).then(res => res.json()).then(data => 
+			//       { 
+			//         var list_kec=`<option value="">--pilih blok--</option>`;
+			//         for(let li of data.get_dt)
+			//         {
 			         
-			         var selected_=id_blok==li.id_blok?'selected="selected"':'';
-			         list_kec+=`<option value="`+li.id_blok+`" `+selected_+`>`+li.id_blok+`</option>`;
+			//          var selected_=id_blok==li.id_blok?'selected="selected"':'';
+			//          list_kec+=`<option value="`+li.id_blok+`" `+selected_+`>`+li.id_blok+`</option>`;
 
-			        }
-			        $('select[name="id_blok"]').html(list_kec); 
-			    });
+			//         }
+			//         $('select[name="id_blok"]').html(list_kec); 
+			//     });
 
-			}
+			// }
 			//get nop
 			$('body').delegate('#nop','submit',function(e)
 			{
-			  e.preventDefault(); 
-			   var fiscal_parcels 	='';
-			   var buildings 		='';
-			   var legal_parcels 	='';
+			  e.preventDefault();  
 			   var id_desa=$('select[name="id_desa"]').val(); 
 			   if(!id_desa)
 			   {
@@ -158,20 +199,71 @@
 			   }  
 			   if($('input[name="fiscal_parcels"]').is(':checked'))
 			   {
-			      var fiscal_parcels=1; 
+			       window.fiscal_parcels=1; 
 			   }
 			   if($('input[name="buildings"]').is(':checked'))
 			   { 
-			      var buildings=1;
+			       window.buildings=1;
 			   } 
 
 			   if($('input[name="Legal_parcels"]').is(':checked'))
 			   {
-			     var legal_parcels =1;
+			     window.legal_parcels =1;
 			   }
-			   var get_kec=$('select[name="id_kec"]').val();
-			   var get_blok=$('select[name="id_blok"]').val();  
+				   window.get_kec=$('select[name="id_kec"]').val(); 
+				   window.id_desa=id_desa;  
+			 	tampilkanData();
 			});
+
+
+			$('body').delegate('#sidehide','click',function(e)
+			{
+				 e.preventDefault(); 
+				 $(this).closest('.side_bar').toggleClass('show');
+				 console.log($(this).closest('.side_bar').hasClass('show'));
+				 if($(this).closest('.side_bar').hasClass('show'))
+				 {
+
+				 	$('.page_content').removeClass('col-md-12');
+				 	$('.page_content').addClass('col-md-10');
+				 }
+				 else
+				 {
+				 	$('.page_content').removeClass('col-md-10');
+				 	$('.page_content').addClass('col-md-12');
+				 }
+			});
+			function tampilkanData()
+			{ 
+					const formnop   = new FormData(); 
+					formnop.append('_token',_token); 
+					if(window.fiscal_parcels)
+					{
+						formnop.append('fiscal_parcels',window.fiscal_parcels);
+					}
+					if( window.legal_parcels)
+					{
+						formnop.append('legal_parcels', window.legal_parcels);
+					} 
+					if( window.buildings)
+					{
+						formnop.append('buildings', window.buildings);
+					} 
+					if(window.get_kec)
+					{
+						formnop.append('get_kec', window.get_kec);
+					}
+					if(window.id_desa)
+					{
+						formnop.append('id_desa', window.id_desa);
+					}  
+
+					fetch('{{url('get-data-tabel')}}', { method: 'POST',body:formnop}).then(res => res.json()).then(data => 
+					{ 
+
+					}); 
+			}
+			
 	});
 </script>
 

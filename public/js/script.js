@@ -222,6 +222,7 @@ function loaddata(id_kec,id_desa,get_blok="",fiscal_parcels='',buildings='',lega
       var legal_url     =legal_parcels!=""?'&legal_parcels='+legal_parcels:'';
       var url_          ='?id_kec='+id_kec+'&id_kel='+id_desa+id_blok+fiscal_url+buildings_url+legal_url;
       window.id_desa    =id_desa; 
+      window.get_blok   =get_blok;
       window.history.pushState({'historycontent':url_}, null,url_); 
       $('input[name="informasi"]').attr('disabled','disabled'); 
       $('input[name="ubah"]').attr('disabled','disabled');  
@@ -1228,10 +1229,13 @@ $('body').delegate('#simpanpilihModal','submit',function(e)
    var wkt_polygon     = formatwkt.writeGeometry(layer_persil.getGeometry(),{dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857'});  
    const Layerbarusimpan   = new FormData();    
    var wktRep          = new Blob([wkt_polygon]); 
+   var get_blok       =window.get_blok!=undefined||window.get_blok!=''?window.get_blok:'';
+   var id_desa      =window.id_desa+get_blok;
+   
    Layerbarusimpan.append('_token',_token); 
    Layerbarusimpan.append('wktRep',wktRep); 
    Layerbarusimpan.append('db',$('select[name="nama_db"]').val());  
-   Layerbarusimpan.append('data_titik',window.id_desa);  
+   Layerbarusimpan.append('data_titik',id_desa);  
    fetch(simpandatajsonbaru, { method: 'POST',body:Layerbarusimpan}).then(res => res.json()).then(data => 
          { 
               

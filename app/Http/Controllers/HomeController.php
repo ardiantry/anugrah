@@ -468,7 +468,34 @@ class HomeController extends Controller
           return view('data_table');
     }
 
+ public function getdatatabel(Request $request)
+    {
+        $fiscal_parcels=array(); 
+        $legal_parcels=array();  
+        $buildings=array(); 
 
+        if($request->input('fiscal_parcels')) 
+        { 
+            $fiscal_parcels= DB::table('fiscal_parcels')
+            ->select('d_nop', 'id', 'd_luas', 'luas', 'njop', 'alamatobj', 'alamatobj', 'blok', 'no')
+            ->where('d_nop','like',$request->input('id_desa').'%')->get();
+        }
+
+        if($request->input('legal_parcels')) 
+        { 
+            $legal_parcels= DB::table('legal_parcels')
+            ->select('id', 'nib', 'tipehak', 'penggunaanlahan', 'tataruang', 'ketinggian', 'kemiringan')->get();
+        }
+        if($request->input('buildings')) 
+        { 
+            $buildings= DB::table('buildings')
+            ->select('idbgn', 'id', 'd_nop', 'blok', 'no', 'njopbgn', 'luasbgn', 'njopbgnm2')->where('d_nop','like',$request->input('id_desa').'%')->get();
+        }
+
+
+        print json_encode(array('error' => false));    
+          
+    }
 
 
 }
