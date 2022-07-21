@@ -20,6 +20,7 @@ class CreateUsersTable extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->enum('rule',['admin','user']); 
+            $table->enum('levelkases',['atrbpn','bppkad','dpupr']);
             $table->rememberToken();
             $table->timestamps();
         });

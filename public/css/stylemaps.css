@@ -117,8 +117,8 @@
 .btnsimpan {
   position: absolute;
   z-index: 10;
-  right: 14px;
-  top: 190px;
+  right: 139px;
+  top: 86px;
 }
 #modalpagedata td {
   font-size: 15px;
@@ -157,7 +157,7 @@
   padding-bottom: 96px;
   z-index: 100;
   background: rgb(255, 255, 255);
-  padding-top: 72px;
+  padding-top: 90px;
   bottom: 0;
   top: 0;
 }
@@ -243,6 +243,16 @@
 }
 .table.infolayer {
   border: 1px solid #ccc;
+}
+.side_bar h3 {
+  position: absolute;
+  font-size: 15px;
+  background: rgb(1, 76, 113);
+  margin: 0;
+  padding: 5px 10px;
+  left: 6px;
+  color: #fff;
+  top: 70px;
 }
 @media(max-width: 500px)
 {

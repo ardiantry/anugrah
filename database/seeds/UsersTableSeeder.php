@@ -17,16 +17,40 @@ class UsersTableSeeder extends Seeder
               'email'       => 'admin@admin.com', 
               'password'    => bcrypt('admin123'),  
               'rule'        =>'admin',
+              'levelkases'  =>'atrbpn', 
               'updated_at'  => \Carbon\Carbon::now('Asia/Jakarta'), 
               'created_at'  => \Carbon\Carbon::now('Asia/Jakarta')
             ], 
         ]);
          \App\User::insert([
             [
-              'name'        => 'user',
-              'email'       => 'user@user.com', 
-              'password'    => bcrypt('user123'),  
+              'name'        => 'atrbpn',
+              'email'       => 'atrbpn@atrbpn.com', 
+              'password'    => bcrypt('atrbpn123'),  
               'rule'        =>'user',
+              'levelkases'  =>'atrbpn', 
+              'updated_at'  => \Carbon\Carbon::now('Asia/Jakarta'), 
+              'created_at'  => \Carbon\Carbon::now('Asia/Jakarta')
+            ], 
+        ]);
+          \App\User::insert([
+            [
+              'name'        => 'bppkad',
+              'email'       => 'bppkad@bppkad.com', 
+              'password'    => bcrypt('bppkad123'),  
+              'rule'        =>'user',
+              'levelkases'  =>'bppkad',
+              'updated_at'  => \Carbon\Carbon::now('Asia/Jakarta'), 
+              'created_at'  => \Carbon\Carbon::now('Asia/Jakarta')
+            ], 
+        ]);
+         \App\User::insert([
+            [
+              'name'        => 'dpupr',
+              'email'       => 'dpupr@dpupr.com', 
+              'password'    => bcrypt('dpupr123'),  
+              'rule'        =>'user',
+              'levelkases'  =>'dpupr',
               'updated_at'  => \Carbon\Carbon::now('Asia/Jakarta'), 
               'created_at'  => \Carbon\Carbon::now('Asia/Jakarta')
             ], 

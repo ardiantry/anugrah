@@ -1,95 +1,151 @@
 @extends('layouts.app')
-
 @section('content')
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.14.1/css/ol.css" type="text/css">
-<link rel="stylesheet" href="{{asset('css/stylemaps.css')}}" type="text/css"> 
-<!-- side bar -->
-<div  class="side_bar"> 
-      <form id="nop" name="nop">
-          <div class="form-group row">
-            <div class="col-lg-12 col-md-12 col-sm-6 col-xs-6">
-                <label>Pilih Kecamatan</label>
-                <select name="id_kec" class="form-control"> 
-                </select> 
-            </div>
-            <div class="col-lg-12 col-md-12 col-sm-6 col-xs-6">
-                <label>Pilih Desa</label>
-                <select name="id_desa" class="form-control" readonly="readonly"> 
-                </select> 
-            </div>
-             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <label>Blok</label>
-                <select name="id_blok" class="form-control" readonly="readonly"> 
-                </select> 
-            </div>
-          </div> 
-          <div class="form-group clr_l">
-              <input type="checkbox" name="fiscal_parcels" value="1"> 
-              <div class="form-control">
-                  <label>Fiscal_parcels</label> 
-                  <div class="color_ Fiscal_parcels_clr"></div> 
-              </div>
-          </div>  
-          <div class="form-group clr_l">
-               <input type="checkbox" name="buildings" value="1">
-                  <div class="form-control">
-                      <label>Buildings</label> 
-                      <div class="color_ buildings_clr"></div> 
-                  </div>
-          </div>    
-          <div class="form-group clr_l">
-                    <input type="checkbox" name="Legal_parcels" value="1">
-                     <div class="form-control">
-                    <label>Legal_parcels</label> 
-                    <div class="color_ Legal_parcels_clr"></div> 
-                </div>
-            </div>  
-            <div class="form-group text-center">
-                <button class="btn btn-success btn-sm" type="submit" ><i class="fa fa-search"></i> Tampilkan</button>
-                @if(@Auth::user()->id)
-                  <a href="#" class="btn btn-primary btn-sm" id="modalunggah"><i class="fa fa-cloud-upload"></i> unggah</a>
-                @endif
-            
-            </div>
-      </form>
-      <div class="border">
-        
-                <div class="form-group clr_l">
+@php
+$akses        =array();
+$akses_lain   =array(); 
+$label_akses  ='Publis';
+switch(@Auth::user()->levelkases)
+{
+  case 'atrbpn': 
+      $akses        =array('Legal_parcels');
+      $label_akses  ='ATR/BPN';
+      $akses_lain   =array();
+
+  break;
+  case 'bppkad':
+    $akses        =array('fiscal_parcels','buildings');
+    $label_akses  ='BPPKAD';
+    $akses_lain   =array('DataWajibPajak');
+
+
+  break;
+  case 'dpupr':
+    $akses        =array(); 
+    $label_akses  ='DPUPR'; 
+    $akses_lain   =array('Land_use','JaringanJalan','JaringanPDAM','JaringanListrik','DataWajibPajak');  
+  break;  
+} 
+$menu_utama=array(
+                  'fiscal_parcels'=>'<div class="form-group clr_l">
+                                    <input type="checkbox" name="fiscal_parcels" value="1"> 
+                                    <div class="form-control">
+                                    <label>Fiscal_parcels</label> 
+                                    <div class="color_ Fiscal_parcels_clr"></div> 
+                                    </div>
+                                    </div> ',
+                    'buildings'   =>'<div class="form-group clr_l">
+                                  <input type="checkbox" name="buildings" value="1">
+                                  <div class="form-control">
+                                  <label>Buildings</label> 
+                                  <div class="color_ buildings_clr"></div> 
+                                  </div>
+                                  </div>',
+                    'Legal_parcels'=>'<div class="form-group clr_l">
+                          <input type="checkbox" name="Legal_parcels" value="1">
+                           <div class="form-control">
+                          <label>Legal_parcels</label> 
+                          <div class="color_ Legal_parcels_clr"></div> 
+                      </div>
+                  </div>');
+$menu_utama_2=array(
+'Land_use'=>'<div class="form-group clr_l">
                       <input type="checkbox" name="Land_use" value="1">
                        <div class="form-control">
                             <label>Land_use</label> 
                           <div class="Land_use_clr"></div> 
                       </div>
-                </div> 
-                 <div class="form-group clr_l">
+                </div>',
+'JaringanJalan'=> 
+                 '<div class="form-group clr_l">
                         <input type="checkbox" name="JaringanJalan" value="1">
                        <div class="form-control">
                           <label>JaringanJalan</label> 
                           <div class="Land_jln_clr"></div> 
                       </div>
-                </div> 
-                 <div class="form-group clr_l">
+                </div>',
+'JaringanPDAM'=>
+                 '<div class="form-group clr_l">
                        <input type="checkbox" name="JaringanPDAM" value="1">
                        <div class="form-control">
                           <label>Jaringan PDAM</label> 
                           <div class="pdam_clr"></div> 
                       </div>
-                </div>  
-                <div class="form-group clr_l">
+                </div>',
+'JaringanListrik'=> 
+                '<div class="form-group clr_l">
                             <input type="checkbox" name="JaringanListrik" value="1">
                        <div class="form-control">
                           <label>JaringanListrik</label> 
                           <div class="pln_clr"></div> 
                       </div>
-                </div> 
-                <div class="form-group clr_l">
+                </div>',
+'DataWajibPajak'=>
+                '<div class="form-group clr_l">
                             <input type="checkbox" name="DataWajibPajak" value="1">
                        <div class="form-control">
                         <label>DataWajibPajak</label> 
                         <div class="Land_use_clr"></div> 
                       </div>
-                </div>  
+                </div>'); 
+
+
+
+$contohoption=array(
+        'fiscal_parcels'=>'<option value="fiscal_parcels">fiscal_parcels</option>',
+        'buildings'=>'<option value="buildings">buildings</option>', 
+        'Legal_parcels'=>'<option value="legal_parcels">Legal_parcels</option>', 
+        'Land_use'=>'<option value="land_uses">land_uses</option>',
+        'JaringanJalan'=>'<option value="jalans">jalans</option>',
+        'JaringanListrik'=>'<option value="jaringan_plns">jaringan_plns</option>',
+        'JaringanPDAM'=>'<option value="jaringan_pdams">jaringan_pdams</option>'  
+        );
+
+@endphp
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.14.1/css/ol.css" type="text/css">
+<link rel="stylesheet" href="{{asset('css/stylemaps.css')}}" type="text/css"> 
+<!-- side bar -->
+<div  class="side_bar"> 
+      <h3>{{$label_akses}}</h3>
+      <form id="nop" name="nop">
+
+        @if(count($akses)!=0)
+        <div class="form-group row">
+                <div class="col-lg-12 col-md-12 col-sm-6 col-xs-6">
+                    <label>Pilih Kecamatan</label>
+                    <select name="id_kec" class="form-control"> 
+                    </select> 
+                </div>
+                <div class="col-lg-12 col-md-12 col-sm-6 col-xs-6">
+                    <label>Pilih Desa</label>
+                    <select name="id_desa" class="form-control" readonly="readonly"> 
+                    </select> 
+                </div>
+                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <label>Blok</label>
+                    <select name="id_blok" class="form-control" readonly="readonly"> 
+                    </select> 
+                </div>
+              </div>
+          @foreach($akses as $menu)
+             {!!$menu_utama[$menu]!!}
+          @endforeach
+          <div class="form-group text-center">
+              <button class="btn btn-success btn-sm" type="submit" ><i class="fa fa-search"></i> Tampilkan</button>
+              @if(@Auth::user()->id)
+                <a href="#" class="btn btn-primary btn-sm" id="modalunggah"><i class="fa fa-cloud-upload"></i> unggah</a>
+              @endif 
+          </div>
+          @else
+          <div class="alert alert-warning">Silahkan Login Terlebih Dahulu</div>
+        @endif
+      </form>
+      @if(count($akses_lain)!=0)
+      <div class="border"> 
+        @foreach($akses_lain as $lain)
+         {!!$menu_utama_2[$lain]!!}
+        @endforeach
       </div> 
+      @endif
       
  </div>
 
@@ -183,14 +239,13 @@
                     <div class="form-group"> 
                         <label>Tabel yg ingin di insert</label>
                             <select class="form-control" name="jenis_tabel"> 
-                            <option value="fiscal_parcels">fiscal_parcels</option>
-                            <option value="buildings">buildings</option> 
-                            <option value="legal_parcels">Legal_parcels</option> 
-                            <option value="land_uses">land_uses</option>
-                            <option value="jalans">jalans</option>
-                            <option value="jaringan_plns">jaringan_plns</option>
-                            <option value="jaringan_pdams">jaringan_pdams</option>  
-                        </select>
+                                @foreach($akses as $menu)
+                                    {!!@$contohoption[$menu]!!}
+                                @endforeach 
+                                @foreach($akses_lain as $lain)
+                                    {!!@$contohoption[$lain]!!}
+                                @endforeach
+                            </select>
                     </div>
                      <div class="form-group"> 
                       <button type="submit" class="btn btn-success btn-sm">simpan</button>

@@ -470,30 +470,86 @@ class HomeController extends Controller
 
  public function getdatatabel(Request $request)
     {
-        $fiscal_parcels=array(); 
-        $legal_parcels=array();  
-        $buildings=array(); 
+        $fiscal_parcels =array(); 
+        $legal_parcels  =array();  
+        $buildings      =array(); 
 
         if($request->input('fiscal_parcels')) 
         { 
-            $fiscal_parcels= DB::table('fiscal_parcels')
-            ->select('d_nop', 'id', 'd_luas', 'luas', 'njop', 'alamatobj', 'alamatobj', 'blok', 'no')
-            ->where('d_nop','like',$request->input('id_desa').'%')->get();
+            $dt_f= DB::table('fiscal_parcels');
+            $dt_f->select('d_nop', 'id', 'd_luas', 'luas', 'njop', 'alamatobj','blok', 'no');
+            $dt_f->where('d_nop','like',$request->input('id_desa').'%');
+            if($request->input('cari'))
+            {
+                $dt_f->where('alamatobj','like','%'.$request->input('cari').'%'); 
+
+                $dt_f->Orwhere('d_nop','like',$request->input('id_desa').'%');
+                $dt_f->where('blok','like','%'.$request->input('cari').'%'); 
+
+                $dt_f->Orwhere('d_nop','like',$request->input('id_desa').'%');
+                $dt_f->where('no','like','%'.$request->input('cari').'%'); 
+
+                $dt_f->Orwhere('d_nop','like',$request->input('id_desa').'%');
+                $dt_f->where('d_nop','like','%'.$request->input('cari').'%'); 
+
+                $dt_f->Orwhere('d_nop','like',$request->input('id_desa').'%');
+                $dt_f->where('luas','like','%'.$request->input('cari').'%'); 
+
+                $dt_f->Orwhere('d_nop','like',$request->input('id_desa').'%');
+                $dt_f->where('d_luas','like','%'.$request->input('cari').'%'); 
+
+            }
+            $fiscal_parcels= $dt_f->paginate(20);
         }
 
         if($request->input('legal_parcels')) 
         { 
-            $legal_parcels= DB::table('legal_parcels')
-            ->select('id', 'nib', 'tipehak', 'penggunaanlahan', 'tataruang', 'ketinggian', 'kemiringan')->get();
+            $dt_l= DB::table('legal_parcels');
+            $dt_l->select('id', 'nib', 'tipehak', 'penggunaanlahan', 'tataruang', 'ketinggian', 'kemiringan');
+            if($request->input('cari'))
+            {
+                $dt_l->where('nib','like','%'.$request->input('cari').'%');  
+                $dt_l->Orwhere('tipehak','like','%'.$request->input('cari').'%'); 
+                $dt_l->Orwhere('penggunaanlahan','like','%'.$request->input('cari').'%');  
+                $dt_l->Orwhere('tataruang','like','%'.$request->input('cari').'%');  
+                $dt_l->Orwhere('ketinggian','like','%'.$request->input('cari').'%'); 
+                $dt_l->Orwhere('kemiringan','like','%'.$request->input('cari').'%');
+            }
+            $legal_parcels=$dt_l->paginate(20);
         }
         if($request->input('buildings')) 
         { 
-            $buildings= DB::table('buildings')
-            ->select('idbgn', 'id', 'd_nop', 'blok', 'no', 'njopbgn', 'luasbgn', 'njopbgnm2')->where('d_nop','like',$request->input('id_desa').'%')->get();
-        }
+            $dt_b= DB::table('buildings');
+            $dt_b->select('idbgn', 'id', 'd_nop', 'blok', 'no', 'njopbgn', 'luasbgn', 'njopbgnm2');
+            $dt_b->where('d_nop','like',$request->input('id_desa').'%');
+            if($request->input('cari'))
+            {
+                    $dt_b->where('idbgn','like','%'.$request->input('cari').'%');  
 
+                    $dt_b->Orwhere('d_nop','like',$request->input('id_desa').'%'); 
+                    $dt_b->where('blok','like','%'.$request->input('cari').'%');  
 
-        print json_encode(array('error' => false));    
+                    $dt_b->Orwhere('d_nop','like',$request->input('id_desa').'%'); 
+                    $dt_b->where('njopbgn','like','%'.$request->input('cari').'%');  
+
+                    $dt_b->Orwhere('d_nop','like',$request->input('id_desa').'%'); 
+                    $dt_b->where('luasbgn','like','%'.$request->input('cari').'%');  
+
+                    $dt_b->Orwhere('d_nop','like',$request->input('id_desa').'%'); 
+                    $dt_b->where('njopbgnm2','like','%'.$request->input('cari').'%');  
+                    
+                    $dt_b->Orwhere('d_nop','like',$request->input('id_desa').'%'); 
+                    $dt_b->where('d_nop','like','%'.$request->input('cari').'%');  
+                    
+            }
+            $buildings=$dt_b->paginate(20);
+        } 
+
+        print json_encode(array(
+            'error' => false,
+            'fiscal_parcels'=>$fiscal_parcels,
+            'legal_parcels'=>$legal_parcels,
+            'buildings'=>$buildings));    
           
     }
 
