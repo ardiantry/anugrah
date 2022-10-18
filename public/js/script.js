@@ -623,7 +623,6 @@ function loadarraywkt(name_wind,data_)
         });
         var X = coord_center[0] + (coord_center[2]-coord_center[0])/2;
         var Y = coord_center[1] + (coord_center[3]-coord_center[1])/2;
-
         view.animate({zoom: nilai_zoom},{center: [X,Y]});
    }
 

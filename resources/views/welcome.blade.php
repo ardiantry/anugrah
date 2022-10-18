@@ -101,7 +101,8 @@ $contohoption=array(
         );
 
 @endphp
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.14.1/css/ol.css" type="text/css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.15.1/css/ol.css" type="text/css">
+
 <link rel="stylesheet" href="{{asset('css/stylemaps.css')}}" type="text/css"> 
 <!-- side bar -->
 <div  class="side_bar"> 
@@ -259,7 +260,8 @@ $contohoption=array(
 
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.14.1/build/ol.js"></script>
+ 
+<script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.15.1/build/ol.js"></script> 
 <script src="{{asset('js/jsts.min.js')}}"></script> 
 <script type="text/javascript"> 
          var _token               ='{{csrf_token()}}';
