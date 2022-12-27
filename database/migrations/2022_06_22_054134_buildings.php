@@ -22,7 +22,7 @@ class Buildings extends Migration
             $table->string('njopbgn')->nullable();
             $table->string('luasbgn')->nullable();
             $table->string('njopbgnm2')->nullable();
-           $table->geometry('geom');
+            $table->geometry('geom');
             $table->timestamps();
         });
     }
